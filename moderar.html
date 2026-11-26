@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#7a122e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icono-192.png">
+<link rel="apple-touch-icon" href="icono-180.png">
+<title>Moderación · Museo Digital CETIS 69</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+<link rel="stylesheet" href="estilos.css">
+<link rel="stylesheet" href="paginas.css">
+<style>
+.skip{position:absolute;left:-999px;top:0;z-index:300;background:#fff;color:var(--guinda);padding:.7rem 1.1rem;font-size:.75rem;letter-spacing:.12em;font-weight:600}
+.skip:focus{left:1rem;top:1rem}
+[hidden]{display:none!important}
+.barra{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.barra small{font-size:.72rem;letter-spacing:.14em;color:var(--gris);text-transform:uppercase;overflow-wrap:anywhere}
+.barra .gr{display:flex;gap:.6rem;flex-wrap:wrap}
+.sec{font-size:1.1rem;color:var(--guinda);margin:2.2rem 0 1rem;font-weight:600;letter-spacing:.04em}
+.sec:focus{outline:none}
+.sec span{color:var(--gris);font-weight:400}
+.vacio{padding:1.6rem 1rem;text-align:center;color:var(--gris);border:1px dashed var(--linea)}
+.acc{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+.acc button,.barra .gr button{padding:.55rem 1rem;border:1px solid var(--guinda);color:var(--guinda);background:#fff;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;transition:.3s}
+.acc .ap{background:var(--guinda);color:#fff}
+.acc button:hover:not(:disabled),.barra .gr button:hover:not(:disabled){background:var(--guinda-d);color:#fff;border-color:var(--guinda-d)}
+.acc .pel{border-color:#b3261e;color:#b3261e}
+.acc .pel:hover:not(:disabled){background:#b3261e;color:#fff;border-color:#b3261e}
+.acc button:disabled{opacity:.5;cursor:wait}
+.acc button:focus-visible,.barra .gr button:focus-visible,.tabs button:focus-visible,.enl:focus-visible{outline:2px solid var(--guinda);outline-offset:3px}
+.msg.fot{display:grid;grid-template-columns:150px 1fr;gap:1.2rem;align-items:start}
+.msg.fot img{width:150px;height:150px;object-fit:cover;background:#ddd;display:block}
+.msg.fot .sinfoto{width:150px;height:150px;display:grid;place-items:center;background:#ebe7e7;color:#8a7f83;font-size:.7rem;text-align:center;padding:.5rem}
+.enl{display:inline-block;margin:.2rem 1rem .2rem 0;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--guinda);text-decoration:underline;text-underline-offset:3px}
+.nota{margin-top:2rem;font-size:.8rem;color:var(--gris);max-width:70ch}
+.fm .ok.err{border-left-color:#b3261e;background:#fbeceb}
+@media (max-width:560px){.msg.fot{grid-template-columns:1fr}.msg.fot img,.msg.fot .sinfoto{width:100%;height:200px}}
+</style>
+</head>
+<body>
+<a href="#contenido" class="skip">Saltar al contenido</a>
+<div id="loader"><div class="ld"><h2>CETIS 69</h2><p>MUSEO DIGITAL</p><div class="bar"><i></i></div></div></div>
+<nav id="nav" class="solid"></nav>
+<header class="phead"><div class="rv"><div class="eyebrow">Solo administradores</div><h1 class="title"><b>Moderación</b></h1><p>Aprueba o borra los mensajes y las fotografías que envía la comunidad. Nada se publica hasta que lo apruebes.</p></div></header>
+<section id="contenido">
+<p class="lead" id="espera">Verificando sesión…</p>
+
+<form id="fl" class="fm" style="max-width:420px" hidden>
+ <label>Correo<input id="em" type="email" required autocomplete="username"></label>
+ <label>Contraseña<input id="pw" type="password" required autocomplete="current-password"></label>
+ <button class="btn" type="submit">Entrar</button>
+ <div class="ok err" id="lm" role="alert" hidden></div>
+</form>
+
+<div id="panel" hidden>
+ <div class="barra">
+  <small>Sesión: <span id="quien"></span></small>
+  <div class="gr"><button type="button" id="act">Actualizar</button><button type="button" id="salir">Salir</button></div>
+ </div>
+ <div class="tabs" id="vistas" role="group" aria-label="Vista"><button class="on" data-v="pend" aria-pressed="true">Pendientes</button><button data-v="pub" aria-pressed="false">Publicados</button></div>
+ <p class="estado" id="estadoP" role="status" style="font-size:.78rem;color:var(--gris)"></p>
+
+ <h2 class="sec" id="hL" tabindex="-1">Libro de visitas <span id="nL"></span></h2>
+ <div id="lsL"></div>
+
+ <h2 class="sec" id="hA" tabindex="-1">Archivo fotográfico <span id="nA"></span></h2>
+ <div id="lsA"></div>
+
+ <p class="nota">Al borrar un recuerdo del archivo se elimina de la base de datos, pero la imagen sigue guardada en tu cuenta de ImgBB. Si quieres liberarla, bórrala desde ahí.</p>
+</div>
+</section>
+<footer></footer>
+<script src="comun.js"></script>
+<script>
+(function(){
+const FBURL='https://www.gstatic.com/firebasejs/10.12.1/';
+const CFG={apiKey:'AIzaSyAZ3EV-CTyH3bdPeMTcPAexWLmRLmoCSEg',authDomain:'amprg-28da9.firebaseapp.com',projectId:'amprg-28da9',storageBucket:'amprg-28da9.firebasestorage.app',messagingSenderId:'425308243013',appId:'1:425308243013:web:40661cf1b6fccb1ed50f2c'};
+let FA,FD,auth,db,vista='pend',DATA={libro:[],archivo:[]};
+
+const espera=$('#espera'),fl=$('#fl'),pn=$('#panel'),lm=$('#lm');
+const okUrl=u=>typeof u==='string'&&/^https:\/\/i\.ibb\.co\//.test(u);
+const okVideo=u=>typeof u==='string'&&/^https:\/\/(www\.)?(youtube\.com|youtu\.be|drive\.google\.com|vimeo\.com|facebook\.com|fb\.watch)\//.test(u);
+const ms=o=>o.creado&&o.creado.toMillis?o.creado.toMillis():0;
+const fecha=o=>o.creado&&o.creado.toDate?o.creado.toDate().toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'}):'';
+const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e};
+
+function mostrarLogin(){espera.hidden=true;pn.hidden=true;fl.hidden=false}
+function mostrarPanel(){espera.hidden=true;fl.hidden=true;pn.hidden=false}
+function errLogin(t){lm.textContent=t;lm.hidden=!t}
+function mensajeAuth(e){
+ const c=(e&&e.code)||'';
+ if(c.includes('too-many-requests'))return 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
+ if(c.includes('network'))return 'No hay conexión. Revisa tu internet.';
+ return 'Correo o contraseña incorrectos.';
+}
+
+async function iniciar(){
+ try{
+  const [a,b,c]=await Promise.all([import(FBURL+'firebase-app.js'),import(FBURL+'firebase-auth.js'),import(FBURL+'firebase-firestore.js')]);
+  const app=a.getApps().length?a.getApp():a.initializeApp(CFG);
+  FA=b;FD=c;auth=b.getAuth(app);db=c.getFirestore(app);
+  FA.onAuthStateChanged(auth,alCambiar);
+ }catch(e){
+  console.error(e);
+  mostrarLogin();errLogin('No se pudo conectar con Firebase. Revisa tu conexión.');
+ }
+}
+
+async function alCambiar(user){
+ if(!user){mostrarLogin();return}
+ try{
+  const mail=String(user.email||'').toLowerCase();
+  const adm=await FD.getDoc(FD.doc(db,'admins',mail));
+  if(!adm.exists()||adm.data().activo===false){
+   errLogin('Esta cuenta no tiene permiso de moderación.');
+   await FA.signOut(auth);
+   return;
+  }
+  $('#quien').textContent=mail;
+  mostrarPanel();
+  await cargar();
+ }catch(e){
+  console.error(e);
+  mostrarLogin();errLogin('No se pudo verificar tu cuenta. Revisa tu conexión.');
+ }
+}
+
+fl.addEventListener('submit',async e=>{
+ e.preventDefault();errLogin('');
+ if(!FA){errLogin('Todavía se está cargando. Inténtalo en un momento.');return}
+ const b=fl.querySelector('.btn');b.disabled=true;
+ try{
+  await FA.signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value);
+  $('#pw').value='';
+ }catch(err){errLogin(mensajeAuth(err))}
+ finally{b.disabled=false}
+});
+$('#salir').addEventListener('click',()=>FA&&FA.signOut(auth));
+$('#act').addEventListener('click',()=>cargar());
+$('#vistas').addEventListener('click',e=>{
+ const b=e.target.closest('button');
+ if(!b||b.dataset.v===vista)return;
+ vista=b.dataset.v;
+ $('#vistas').querySelectorAll('button').forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',String(on))});
+ cargar();
+});
+
+/* ---------- datos ---------- */
+async function traer(col,aprobado){
+ const q=FD.query(FD.collection(db,col),FD.where('aprobado','==',aprobado),FD.limit(200));
+ const s=await FD.getDocs(q);
+ const r=s.docs.map(d=>({id:d.id,...d.data()}));
+ r.sort((a,b)=>aprobado?ms(b)-ms(a):ms(a)-ms(b));   // pendientes: los más viejos primero
+ return r;
+}
+async function cargar(){
+ $('#estadoP').textContent='Cargando…';
+ try{
+  const aprobado=vista==='pub';
+  const [l,a]=await Promise.all([traer('libro',aprobado),traer('archivo',aprobado)]);
+  DATA={libro:l,archivo:a};
+  $('#estadoP').textContent='';
+ }catch(e){
+  console.error(e);
+  DATA={libro:[],archivo:[]};
+  $('#estadoP').textContent=e&&e.code==='permission-denied'
+   ?'Sin permiso para leer. Revisa las reglas de Firestore y que tu correo exista en la colección admins.'
+   :'No se pudieron cargar los datos. Revisa tu conexión y pulsa Actualizar.';
+ }
+ pintar();
+}
+
+/* ---------- pantalla ---------- */
+function contadores(){
+ $('#nL').textContent='('+DATA.libro.length+')';
+ $('#nA').textContent='('+DATA.archivo.length+')';
+}
+function pintar(){
+ contadores();
+ pintarLista($('#lsL'),'libro');
+ pintarLista($('#lsA'),'archivo');
+}
+function pintarLista(cont,col){
+ cont.textContent='';
+ const lista=DATA[col];
+ if(!lista.length){cont.append(el('p','vacio',vista==='pend'?'No hay nada pendiente.':'Todavía no hay nada publicado.'));return}
+ lista.forEach(o=>cont.append(col==='libro'?tarjetaLibro(o):tarjetaArchivo(o)));
+}
+function boton(txt,cls,fn){
+ const b=el('button',cls,txt);b.type='button';b.addEventListener('click',fn);return b;
+}
+function bloquear(card,v){card.querySelectorAll('button').forEach(b=>b.disabled=v)}
+function fallo(e){
+ console.error(e);
+ toast(e&&e.code==='permission-denied'?'Sin permiso: revisa las reglas de Firestore.':'No se pudo completar la acción. Inténtalo de nuevo.');
+}
+function quitar(col,o,card){
+ const sig=card.nextElementSibling,cont=card.parentElement;
+ DATA[col]=DATA[col].filter(x=>x.id!==o.id);
+ card.remove();
+ contadores();
+ if(!DATA[col].length)pintarLista(cont,col);
+ const f=sig&&sig.querySelector&&sig.querySelector('button');
+ (f||(col==='libro'?$('#hL'):$('#hA'))).focus();
+}
+function acciones(col,o,card){
+ const box=el('div','acc'),pub=vista==='pub';
+ box.append(boton(pub?'Despublicar':'Aprobar',pub?'':'ap',async()=>{
+  bloquear(card,true);
+  try{
+   await FD.updateDoc(FD.doc(db,col,o.id),{aprobado:!pub});
+   quitar(col,o,card);
+   toast(pub?'Quitado de la vista pública':'Publicado');
+  }catch(e){fallo(e);bloquear(card,false)}
+ }));
+ let armado=false,t;
+ const bd=boton('Borrar','pel',async()=>{
+  if(!armado){
+   armado=true;bd.textContent='¿Seguro? Pulsa otra vez';
+   t=setTimeout(()=>{armado=false;bd.textContent='Borrar'},4000);
+   return;
+  }
+  clearTimeout(t);bloquear(card,true);
+  try{
+   await FD.deleteDoc(FD.doc(db,col,o.id));
+   quitar(col,o,card);
+   toast(col==='archivo'?'Borrado. La imagen sigue en ImgBB.':'Borrado');
+  }catch(e){fallo(e);bloquear(card,false);armado=false;bd.textContent='Borrar'}
+ });
+ box.append(bd);
+ return box;
+}
+function tarjetaLibro(o){
+ const d=el('article','msg');
+ d.append(el('h3',null,String(o.n||'')));
+ d.append(el('div','meta',[o.r,fecha(o),vista==='pub'?(+o.likes||0)+' me emociona':''].filter(Boolean).join(' · ')));
+ d.append(el('p',null,String(o.m||'')));
+ d.append(acciones('libro',o,d));
+ return d;
+}
+function tarjetaArchivo(o){
+ const d=el('article','msg fot');
+ const src=okUrl(o.miniatura)?o.miniatura:(okUrl(o.imagen)?o.imagen:'');
+ if(src){const im=el('img');im.src=src;im.alt=String(o.descripcion||'Fotografía enviada');im.loading='lazy';d.append(im)}
+ else d.append(el('div','sinfoto','Sin imagen válida'));
+ const t=el('div');
+ t.append(el('h3',null,String(o.nombre||'')+' · '+String(o.anio||'')));
+ t.append(el('div','meta',[fecha(o),o.consentimiento===true?'Con consentimiento':'Sin consentimiento'].filter(Boolean).join(' · ')));
+ t.append(el('p',null,String(o.descripcion||'')));
+ if(okUrl(o.imagen)){const a=el('a','enl','Abrir imagen');a.href=o.imagen;a.target='_blank';a.rel='noopener noreferrer';t.append(a)}
+ if(okVideo(o.video)){const a=el('a','enl','Ver video');a.href=o.video;a.target='_blank';a.rel='noopener noreferrer';t.append(a)}
+ t.append(acciones('archivo',o,d));
+ d.append(t);
+ return d;
+}
+
+iniciar();
+})();
+</script>
+</body>
+</html>
