@@ -30,6 +30,10 @@
 .like.on,.like:disabled{background:var(--guinda);color:#fff;border-color:var(--guinda);cursor:default}
 .ver{margin:1.6rem auto 0;display:flex}
 .filtros button:focus-visible,.like:focus-visible,.ver:focus-visible,.fm .btn:focus-visible{outline:2px solid var(--guinda);outline-offset:3px}
+.fm .btn:disabled{opacity:.6;cursor:wait}
+.ok.err{border-left-color:#b3261e;background:#fbeceb}
+.msg.pend{border-left-style:dashed;opacity:.85}
+.pend-tag{display:inline-block;margin-left:.4rem;padding:.12rem .5rem;border:1px solid var(--guinda);color:var(--guinda);font-size:.58rem;letter-spacing:.16em;font-weight:700;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -40,16 +44,18 @@
 <section><div class="lb"><form id="f" class="fm"><label>Nombre<input id="nm" required maxlength="60" autocomplete="name"></label><label>Eres<select id="rl"><option>Exalumno</option><option>Alumno</option><option>Docente</option><option>Visitante</option></select></label><label>Mensaje<textarea id="ms" required maxlength="400" rows="5"></textarea></label><button class="btn" type="submit">Enviar <i class="fa-solid fa-paper-plane"></i></button></form><div><div class="eyebrow">Mensajes <span id="ct"></span></div><div id="ls" aria-live="polite"></div></div></div></section>
 <footer></footer>
 <script src="comun.js"></script>
+<script src="firebase-museo.js"></script>
 <script>
 DATOS.catch(()=>({})).then(D=>{
-const ENDPOINT=(D.ajustes&&D.ajustes.libroEndpoint)||'';
-const K='cetis69_libro',KL='cetis69_likes',ROLES=['Todos','Exalumno','Alumno','Docente','Visitante'];
-const f=$('#f'),nm=$('#nm'),rl=$('#rl'),ms=$('#ms'),ls=$('#ls');
-let L=[],likes=[],filtro='Todos',tope=10;
-try{L=JSON.parse(localStorage.getItem(K))||[]}catch(e){}
+const KM='cetis69_libro_mios',KL='cetis69_likes',KT='cetis69_libro_t';
+const ROLES=['Todos','Exalumno','Alumno','Docente','Visitante'];
+const MAX=100,ESPERA=30000,CADUCA=14*24*3600*1000;
+const f=$('#f'),nm=$('#nm'),rl=$('#rl'),ms=$('#ms'),ls=$('#ls'),btn=f.querySelector('.btn');
+const btnHTML=btn.innerHTML;
+let L=[],mios=[],likes=[],filtro='Todos',tope=10,estado='cargando';
+try{mios=JSON.parse(localStorage.getItem(KM))||[]}catch(e){}
 try{likes=JSON.parse(localStorage.getItem(KL))||[]}catch(e){}
-const nuevoId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-L.forEach(o=>{if(!o.id)o.id=nuevoId()});
+mios=mios.filter(o=>o&&o.id&&Date.now()-(o.t||0)<CADUCA);
 
 nm.minLength=2;
 ms.minLength=10;
@@ -64,6 +70,11 @@ ms.addEventListener('input',cuenta);
 cuenta();
 
 const st=document.createElement('p');st.className='ok';st.setAttribute('role','status');st.hidden=true;f.append(st);
+let tSt;
+function mostrar(txt,error){
+ st.textContent=txt;st.classList.toggle('err',!!error);st.hidden=false;
+ clearTimeout(tSt);tSt=setTimeout(()=>st.hidden=true,error?9000:7000);
+}
 
 const bar=document.createElement('div');bar.className='filtros';
 bar.innerHTML=ROLES.map(r=>`<button type="button" data-r="${r}">${r}</button>`).join('');
@@ -74,8 +85,71 @@ bar.addEventListener('click',e=>{
  filtro=b.dataset.r;tope=10;draw();
 });
 
+const fechaCorta=d=>d.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+const fechaDe=ts=>ts&&ts.toDate?fechaCorta(ts.toDate()):'';
+
 function guardar(){
- try{localStorage.setItem(K,JSON.stringify(L));localStorage.setItem(KL,JSON.stringify(likes))}catch(e){}
+ try{localStorage.setItem(KM,JSON.stringify(mios));localStorage.setItem(KL,JSON.stringify(likes))}catch(e){}
+}
+
+async function cargar(){
+ estado='cargando';draw();
+ try{
+  const docs=await NUBE.aprobados('libro',MAX);
+  L=docs.map(d=>{const x=d.data();return {id:d.id,n:String(x.n||''),r:String(x.r||''),m:String(x.m||''),likes:+x.likes||0,f:fechaDe(x.creado)}});
+  const ids=new Set(L.map(o=>o.id));
+  mios=mios.filter(o=>!ids.has(o.id));
+  guardar();
+  estado='ok';
+ }catch(e){
+  console.error(e);
+  estado='error';
+ }
+ draw();
+}
+
+function aviso(txt,reintentar){
+ const p=document.createElement('p');p.className='lead';p.textContent=txt;
+ ls.append(p);
+ if(reintentar){
+  const b=document.createElement('button');b.type='button';b.className='btn ver';b.textContent='Reintentar';
+  b.onclick=cargar;ls.append(b);
+ }
+}
+
+function tarjeta(o,pendiente){
+ const d=document.createElement('article');d.className='msg'+(pendiente?' pend':'');
+ const h=document.createElement('h3');h.textContent=o.n;
+ const m=document.createElement('div');m.className='meta';m.textContent=o.r+(o.f?' · '+o.f:'');
+ if(pendiente){
+  const t=document.createElement('span');t.className='pend-tag';t.textContent='En revisión';m.append(t);
+ }
+ const p=document.createElement('p');p.textContent=o.m;
+ d.append(h,m,p);
+ if(!pendiente){
+  const b=document.createElement('button');
+  b.type='button';
+  const yo=likes.includes(o.id);
+  b.className='like'+(yo?' on':'');
+  b.disabled=yo;
+  b.innerHTML='<i class="fa-solid fa-heart" aria-hidden="true"></i> <span>'+(o.likes||0)+'</span> me emociona';
+  b.onclick=async()=>{
+   if(likes.includes(o.id))return;
+   b.disabled=true;
+   try{
+    const S=await NUBE.cargar();
+    await S.updateDoc(S.doc(S.db,'libro',o.id),{likes:S.increment(1)});
+    o.likes=(o.likes||0)+1;likes.push(o.id);guardar();
+    b.querySelector('span').textContent=o.likes;
+    b.classList.add('on');
+   }catch(e){
+    console.error(e);b.disabled=false;
+    toast('No se pudo registrar tu reacción. Inténtalo de nuevo.');
+   }
+  };
+  d.append(b);
+ }
+ return d;
 }
 
 function draw(){
@@ -84,30 +158,18 @@ function draw(){
   b.classList.toggle('on',on);
   b.setAttribute('aria-pressed',String(on));
  });
- $('#ct').textContent='('+L.length+')';
+ $('#ct').textContent=estado==='ok'?'('+L.length+')':'';
+ const pend=mios.filter(o=>filtro==='Todos'||o.r===filtro);
  const lista=L.filter(o=>filtro==='Todos'||o.r===filtro);
  ls.innerHTML='';
- if(!lista.length){
-  const p=document.createElement('p');p.className='lead';
-  p.textContent=L.length?'Todavía no hay mensajes de este tipo.':'Aún no hay mensajes. Sé la primera persona en escribir.';
-  ls.append(p);
+ pend.forEach(o=>ls.append(tarjeta(o,true)));
+ if(estado==='cargando'&&!lista.length){aviso('Cargando mensajes…');return}
+ if(estado==='error'&&!lista.length){aviso('No pudimos cargar los mensajes en este momento. Revisa tu conexión e inténtalo otra vez.',true);return}
+ if(!lista.length&&!pend.length){
+  aviso(L.length?'Todavía no hay mensajes de este tipo.':'Aún no hay mensajes. Sé la primera persona en escribir.');
   return;
  }
- lista.slice(0,tope).forEach(o=>{
-  const d=document.createElement('article');d.className='msg';
-  const h=document.createElement('h3');h.textContent=o.n;
-  const m=document.createElement('div');m.className='meta';m.textContent=o.r+' · '+o.f;
-  const p=document.createElement('p');p.textContent=o.m;
-  const b=document.createElement('button');
-  b.type='button';
-  const yo=likes.includes(o.id);
-  b.className='like'+(yo?' on':'');
-  b.disabled=yo;
-  b.innerHTML='<i class="fa-solid fa-heart" aria-hidden="true"></i> <span>'+(o.likes||0)+'</span> me emociona';
-  b.onclick=()=>{o.likes=(o.likes||0)+1;likes.push(o.id);guardar();draw()};
-  d.append(h,m,p,b);
-  ls.append(d);
- });
+ lista.slice(0,tope).forEach(o=>ls.append(tarjeta(o,false)));
  if(lista.length>tope){
   const v=document.createElement('button');
   v.type='button';v.className='btn ver';v.textContent='Ver más mensajes';
@@ -116,34 +178,36 @@ function draw(){
  }
 }
 
-f.addEventListener('submit',e=>{
+f.addEventListener('submit',async e=>{
  e.preventDefault();
  if(hp.value)return;
- const o={
-  id:nuevoId(),
-  n:nm.value.trim(),
-  r:rl.value,
-  m:ms.value.trim(),
-  f:new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}),
-  likes:0
- };
- L.unshift(o);
- if(ENDPOINT){
-  const fd=new FormData();
-  fd.append('nombre',o.n);fd.append('rol',o.r);fd.append('mensaje',o.m);fd.append('fecha',o.f);
-  fetch(ENDPOINT,{method:'POST',body:fd}).catch(()=>{});
+ let ult=0;
+ try{ult=+localStorage.getItem(KT)||0}catch(_){}
+ if(Date.now()-ult<ESPERA){mostrar('Espera unos segundos antes de enviar otro mensaje.',true);return}
+ const o={n:nm.value.trim(),r:rl.value,m:ms.value.trim()};
+ if(o.n.length<2||o.m.length<10)return;
+ btn.disabled=true;btn.textContent='Enviando…';
+ try{
+  const S=await NUBE.cargar();
+  const ref=await S.addDoc(S.collection(S.db,'libro'),{n:o.n,r:o.r,m:o.m,likes:0,aprobado:false,creado:S.serverTimestamp()});
+  const ahora=Date.now();
+  mios.unshift({id:ref.id,n:o.n,r:o.r,m:o.m,f:fechaCorta(new Date(ahora)),t:ahora});
+  guardar();
+  try{localStorage.setItem(KT,String(ahora))}catch(_){}
+  f.reset();cuenta();
+  filtro='Todos';tope=10;
+  mostrar('¡Gracias! Tu mensaje fue recibido y aparecerá en el libro cuando sea revisado.');
+  draw();
+ }catch(err){
+  console.error(err);
+  mostrar('No pudimos enviar tu mensaje. Revisa tu conexión e inténtalo de nuevo; lo que escribiste sigue aquí.',true);
+ }finally{
+  btn.disabled=false;btn.innerHTML=btnHTML;
  }
- guardar();
- f.reset();
- cuenta();
- filtro='Todos';tope=10;
- st.textContent='¡Gracias! Tu mensaje ya está en el libro.';
- st.hidden=false;
- setTimeout(()=>st.hidden=true,6000);
- draw();
 });
 
 draw();
+cargar();
 });
 </script>
 </body>
