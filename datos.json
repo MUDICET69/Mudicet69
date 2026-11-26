@@ -19,6 +19,10 @@
     "u": "libro-visitas.html"
    },
    {
+    "t": "Mapa 360°",
+    "u": "mapa-360.html"
+   },
+   {
     "t": "Archivo fotográfico",
     "u": "archivo-fotografico.html"
    }
@@ -77,6 +81,11 @@
     "t": "Libro de visitas",
     "u": "libro-visitas.html",
     "x": "Deja tu mensaje en el museo"
+   },
+   {
+    "t": "Mapa interactivo 360°",
+    "u": "mapa-360.html",
+    "x": "Recorrido virtual por el plantel"
    },
    {
     "t": "Archivo fotográfico y de video",
@@ -162,6 +171,7 @@
  },
  "ajustes": {
   "archivoEndpoint": "",
+  "imgbbKey": "626b20ab0e1c0edcafcd67505589b070",
   "recorridoSegundos": 8,
   "geoMapa": {
    "referencias": [
@@ -533,7 +543,7 @@
   }
  ],
  "hitoImagenes": {
-  "1986": "1986.jpeg",
+  "1980": "1980.jpeg",
   "1990": "1990.jpeg",
   "2000": "2000.jpeg",
   "2010": "2010.JPG",
