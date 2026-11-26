@@ -1,7 +1,8 @@
-const VERSION='museo-cetis69-v7';
-const NUCLEO=['index.html','salon-fama.html','libro-visitas.html','mapa-360.html','archivo-fotografico.html','Museo-3D.html','museo.js','museo.css','puntos.js','creditos.html','qr-zonas.html','estilos.css','hero-fachada.jpg','fondo-nav.jpg','paginas.css','comun.js','firebase-museo.js','qrcode.js','datos.json','manifest.webmanifest','icono-180.png','icono-192.png','icono-512.png'];
+const VERSION='museo-cetis69-v8';
+const NUCLEO=['index.html','salon-fama.html','libro-visitas.html','mapa-360.html','archivo-fotografico.html','Museo-3D.html','museo.js','museo.css','puntos.js','creditos.html','qr-zonas.html','estilos.css','hero-fachada.jpg','fondo-nav.jpg','paginas.css','comun.js','nix.css','nix.js','nix-cerebro.js','nix-avatar-sm.png','firebase-museo.js','qrcode.js','datos.json','manifest.webmanifest','icono-180.png','icono-192.png','icono-512.png'];
 const EXTERNOS=['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js','https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap'];
 const ESPERA_RED=4000;
+// Firebase (datos y sesión) e ImgBB deben ir directo a la red, nunca por el caché.
 const DIRECTO=/^(firestore|identitytoolkit|securetoken|firebaseinstallations)\.googleapis\.com$|^api\.imgbb\.com$/;
 
 const guardar=async(cache,url,opciones)=>{
