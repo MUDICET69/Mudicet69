@@ -1,3 +1,4 @@
+
 (function(root){
 'use strict';
 
@@ -107,8 +108,8 @@ function crear(D,opc){
  [
   ['Qué es el Museo Digital CETIS 69 (MUDICET69)',PIE.descripcion||'Museo digital del CETIS 69 en Ciudad Obregón.',ini],
   ['Buscar en todo el museo','Pulsa la tecla / o el ícono de la lupa del menú para buscar personas, años, eventos y páginas.',ini],
-  ['Dejar un mensaje en el libro de visitas','Escribe tu nombre, elige si eres exalumno, alumno, docente o visitante y deja tu mensaje. El equipo del museo lo revisa antes de publicarlo; mientras tanto lo verás marcado «En revisión».','libro-visitas.html'],
-  ['Compartir una foto o un video','En el archivo fotográfico llena el formulario con tu nombre, el año aproximado, una descripción y tu fotografía (JPG, PNG o WebP), y autoriza que se publique con tu nombre. Si tienes un video, súbelo a YouTube, Google Drive, Vimeo o Facebook y pega el enlace. El equipo del museo lo revisa antes de publicarlo.','archivo-fotografico.html#envia'],
+  ['Dejar un mensaje en el libro de visitas','Escribe tu nombre, elige si eres exalumno, alumno, docente o visitante y deja tu mensaje.'+aviso(AJ.libroEndpoint,' Por ahora los mensajes se guardan solo en este dispositivo.'),'libro-visitas.html'],
+  ['Compartir una foto o un video','En el archivo fotográfico llena el formulario con tu nombre, el año aproximado, una descripción y el archivo (hasta 100 MB), y autoriza que se publique con tu nombre.'+aviso(AJ.archivoEndpoint,' Por ahora el envío todavía no llega al equipo del museo; mientras tanto puedes compartir tu recuerdo en las redes del CETIS 69.'),'archivo-fotografico.html#envia'],
   ['Recorrido virtual en 3D',pag('Museo-3D.html').x||'Camina por el museo en primera persona.','Museo-3D.html'],
   ['Mapa interactivo 360°',pag('mapa-360.html').x||'Recorrido virtual por el plantel.','mapa-360.html'],
   ['Instalar el museo como app','En el menú de tu navegador elige Instalar app o Agregar a pantalla de inicio. Lo básico sigue funcionando sin internet.',ini],
@@ -351,7 +352,6 @@ function crear(D,opc){
   if(/\b(que es|que fue|hablame|cuentame|explicame|sobre|acerca de)\b.*\b(cetis|museo|plantel|escuela|mudicet)/.test(q)||/^(que es el museo|el museo|el cetis|cetis 69)$/.test(q))return quEs(ctx);
   if(/\b(sorprend\w*|aleatori\w*|dato curioso|curiosidad|algo interesante|recomiend\w*|cuentame algo)\b/.test(q))return aleatorio(Object.assign({},ctx,{rand:1}));
 
-  
   const verboNav=/\b(llevame|lleva me|abre|abrir|ir (?:a|al)|ve (?:a|al)|vamos (?:a|al)|navega|redirige|quiero ver|ensename|donde (veo|encuentro|esta)|como (llego|entro|accedo))\b/.test(q);
   if(verboNav){
    const dest=destino(ts0);
@@ -367,16 +367,6 @@ function crear(D,opc){
   const corr=corregir(ts0);
   const ts=corr.ts;
   const nota=corr.cambios.length?'Entendí «'+corr.cambios.map(c=>c[1]).join(', ')+'».\n':'';
-  // Preguntas frecuentes (datos.json → "preguntas"): si la pregunta cae por completo en una de ellas, se responde directo.
-  const faq=docs.filter(d=>d.k==='Preguntas'&&!d.ph);
-  if(faq.length){
-   const nuc=ts.filter(t=>!GEN.has(t));
-   if(nuc.some(t=>t!=='historia'&&!KIND[t])){
-    const hit=d=>nuc.filter(t=>d.tt.has(t)).length;
-    const m=faq.filter(d=>nuc.every(t=>d.tt.has(t)||d.tx.has(t)||d.tk.has(t))).sort((a,b)=>hit(b)-hit(a))[0];
-    if(m)return R(nota+'**'+m.t+'**\n'+m.x,{cards:[],chips:['Línea del tiempo','Sorpréndeme'],ctx:Object.assign({},ctx,{ult:null})});
-   }
-  }
   const kindC=kindDe(ts);
   const resto=ts.filter(t=>!KIND[t]&&t!=='historia'&&!GEN.has(t));
   if(kindC==='Línea del tiempo'&&!resto.length)return linea(ctx);
