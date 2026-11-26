@@ -19,10 +19,6 @@
     "u": "libro-visitas.html"
    },
    {
-    "t": "Mapa 360°",
-    "u": "mapa-360.html"
-   },
-   {
     "t": "Archivo fotográfico",
     "u": "archivo-fotografico.html"
    }
@@ -81,11 +77,6 @@
     "t": "Libro de visitas",
     "u": "libro-visitas.html",
     "x": "Deja tu mensaje en el museo"
-   },
-   {
-    "t": "Mapa interactivo 360°",
-    "u": "mapa-360.html",
-    "x": "Recorrido virtual por el plantel"
    },
    {
     "t": "Archivo fotográfico y de video",
@@ -542,9 +533,9 @@
   }
  ],
  "hitoImagenes": {
-  "1986": "images/hito-1986.jpg",
-  "1990": "images/hito-1990.jpg",
-  "2000": "images/hito-2000.jpg",
+  "1986": "1986.jpeg",
+  "1990": "1990.jpeg",
+  "2000": "2000.jpeg",
   "2010": "2010.JPG",
   "2020": "cetis69.jpg",
   "2026": "aniversario.jpg"
