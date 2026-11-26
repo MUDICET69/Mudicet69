@@ -8,7 +8,6 @@
 <link rel="icon" type="image/png" href="icono-192.png">
 <link rel="apple-touch-icon" href="icono-180.png">
 <meta name="description" content="Archivo fotográfico y de video del CETIS 69: desfiles, semanas culturales, aniversarios y graduaciones. Comparte tu recuerdo.">
-<meta name="theme-color" content="#7a122e">
 <meta property="og:title" content="Archivo fotográfico · CETIS 69">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='85'%3E%F0%9F%93%B7%3C/text%3E%3C/svg%3E">
@@ -37,10 +36,15 @@
 .mnav:hover{background:var(--guinda);color:#fff;border-color:var(--guinda)}
 .mprev{left:.8rem}
 .mnext{right:.8rem}
-.mshare{margin-top:1.4rem;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--guinda);display:inline-flex;gap:.6rem;align-items:center;padding:.7rem 1rem;border:1px solid var(--guinda);transition:.3s}
+.mshare{margin-top:1.4rem;margin-right:.6rem;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--guinda);display:inline-flex;gap:.6rem;align-items:center;padding:.7rem 1rem;border:1px solid var(--guinda);transition:.3s}
 .mshare:hover{background:var(--guinda);color:#fff}
 .fm .chk{display:flex;gap:.8rem;align-items:flex-start;font-size:.82rem;color:var(--gris);text-transform:none;letter-spacing:normal;font-weight:300}
 .fm .chk input{width:auto;padding:0;border:0;margin-top:.3rem;accent-color:var(--guinda)}
+.fm .ayuda{font-size:.74rem;color:var(--gris);letter-spacing:normal;text-transform:none;font-weight:300}
+.fm .btn:disabled{opacity:.6;cursor:wait}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.ok.err{border-left-color:#b3261e;background:#fbeceb}
+#mImg>img{object-fit:contain;background:#14090d}
 </style>
 <link rel="stylesheet" href="paginas.css">
 </head>
@@ -49,31 +53,83 @@
 <div id="loader"><div class="ld"><h2>CETIS 69</h2><p>MUSEO DIGITAL</p><div class="bar"><i></i></div></div></div>
 <nav id="nav" class="solid"></nav>
 <header class="phead"><div class="rv"><div class="eyebrow">Memoria colectiva</div><h1 class="title">Archivo fotográfico y <b>de video</b></h1><p>Fotografías y videos de desfiles, semanas culturales, aniversarios y graduaciones. Si tienes un recuerdo, compártelo y ayuda a construir el museo.</p></div></header>
-<section><div class="tabs" id="tb"><button class="on" data-f="all">Todas</button><button data-f="198">1980s</button><button data-f="199">1990s</button><button data-f="200">2000s</button><button data-f="201">2010s</button><button data-f="202">2020s</button></div><div class="busca"><input type="search" id="q" placeholder="Buscar por evento, año o palabra" aria-label="Buscar en el archivo"><p class="estado" id="estado" aria-live="polite"></p></div><div class="mas" id="mas"></div></section>
-<section class="info" id="envia"><div class="rv"><div class="eyebrow">Manda tu recuerdo</div><h2 class="title">Comparte tu <b>fotografía</b> o video</h2></div><form id="f" class="fm" style="max-width:640px"><label>Nombre<input id="nm" required maxlength="60"></label><label>Año aproximado<input id="yr" type="number" min="1980" max="2026" required></label><label>Descripción o anécdota<textarea id="ds" required maxlength="300" rows="4"></textarea></label><label>Archivo<input id="fl" type="file" accept="image/*,video/*" required></label><label class="chk"><input type="checkbox" id="cons" required> Autorizo que el museo publique este recuerdo citando a quien lo aportó.</label><button class="btn" type="submit">Enviar recuerdo <i class="fa-solid fa-paper-plane"></i></button><div class="ok" id="ok" hidden>Gracias. Tu recuerdo fue recibido.</div></form></section>
+<section><div class="tabs" id="tb"><button class="on" data-f="all">Todas</button><button data-f="198">1980s</button><button data-f="199">1990s</button><button data-f="200">2000s</button><button data-f="201">2010s</button><button data-f="202">2020s</button></div><div class="busca"><input type="search" id="q" placeholder="Buscar por evento, año, nombre o palabra" aria-label="Buscar en el archivo"><p class="estado" id="estado" aria-live="polite"></p></div><div class="mas" id="mas"></div></section>
+<section class="info" id="envia"><div class="rv"><div class="eyebrow">Manda tu recuerdo</div><h2 class="title">Comparte tu <b>fotografía</b> o video</h2></div><form id="f" class="fm" style="max-width:640px"><label>Nombre<input id="nm" required minlength="2" maxlength="60" autocomplete="name"></label><label>Año aproximado<input id="yr" type="number" min="1980" max="2026" required></label><label>Descripción o anécdota<textarea id="ds" required minlength="5" maxlength="300" rows="4"></textarea></label><label>Fotografía<input id="fl" type="file" accept="image/*" required><span class="ayuda">JPG, PNG o WebP. La reducimos automáticamente antes de subirla.</span></label><label>Enlace a un video (opcional)<input id="vd" type="url" maxlength="200" placeholder="https://youtu.be/…"><span class="ayuda">Si tu recuerdo es un video, súbelo a YouTube, Google Drive, Vimeo o Facebook, pega aquí el enlace y sube una captura como portada.</span></label><label class="chk"><input type="checkbox" id="cons" required> Autorizo que el museo publique este recuerdo citando a quien lo aportó.</label><button class="btn" type="submit">Enviar recuerdo <i class="fa-solid fa-paper-plane"></i></button><div class="ok" id="ok" role="status" hidden></div></form></section>
 <footer></footer>
 <script src="comun.js"></script>
+<script src="firebase-museo.js"></script>
 <script>
-DATOS.then(D=>{
-const ENDPOINT=D.ajustes.archivoEndpoint;
-const P=D.archivo.map(o=>({...o,u:''}));
-let f='all';const mas=$('#mas');
-function draw(){mas.innerHTML='';P.forEach((o,i)=>{if(f!=='all'&&o.d!==f)return;const b=document.createElement('div');b.className='ph';b.tabIndex=0;b.setAttribute('role','button');b.style.aspectRatio=o.r;
-const fg=document.createElement('figure');fg.className='slot';fg.dataset.slot='archivo-'+(i+1);fg.innerHTML=o.u?`<img src="${o.u}" alt="">`:'<i class="fa-regular fa-image"></i>';
-const cp=document.createElement('span');cp.className='cp';cp.textContent=o.c+' · '+o.d+'0s';b.append(fg,cp);b.onclick=()=>openM({n:o.c,r:o.d+'0s',d:'Describe aquí el evento, la fecha y las personas que aparecen en la imagen.',k:'archivo-'+(i+1),th:false});mas.append(b)})}
-$('#tb').querySelectorAll('button').forEach(b=>b.onclick=()=>{f=b.dataset.f;$('#tb').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));draw()});
-$('#f').onsubmit=e=>{e.preventDefault();const fd=new FormData(e.target),fl=$('#fl').files[0];
-if(ENDPOINT)fetch(ENDPOINT,{method:'POST',body:fd}).catch(()=>{});
-P.unshift({d:String($('#yr').value).slice(0,3),c:$('#ds').value.trim().slice(0,60),r:'4/3',u:fl&&fl.type.startsWith('image/')?URL.createObjectURL(fl):''});
-draw();$('#ok').hidden=false;e.target.reset()};
-draw();
-
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const prog=document.createElement('div');prog.id='prog';document.body.prepend(prog);
-addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight||1;prog.style.width=(scrollY/max*100)+'%'},{passive:true});
-
+DATOS.catch(()=>({})).then(D=>{
+const KEY=(D.ajustes&&D.ajustes.imgbbKey)||'';
+const KT='cetis69_archivo_t',ESPERA=60000,MAX_ORIG=40*1024*1024,LADO=1920;
+const BASE=(D.archivo||[]).map((o,i)=>({...o,u:'',k:'archivo-'+(i+1)}));
+let nube=[],sesion=[],P=[],f='all',falloNube=false,cargando=true,subida=null;
+const mas=$('#mas'),q=$('#q'),fl=$('#fl'),form=$('#f'),ok=$('#ok');
 const tabs=[...$('#tb').querySelectorAll('button')];
 tabs.forEach(b=>b.dataset.label=b.textContent.trim());
+const btn=form.querySelector('.btn'),btnHTML=btn.innerHTML;
+$('#yr').max=new Date().getFullYear();
+form.insertAdjacentHTML('beforeend','<input type="text" name="web" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">');
+const hp=form.querySelector('.hp');
+
+const okUrl=u=>typeof u==='string'&&/^https:\/\/i\.ibb\.co\//.test(u);
+const okVideo=u=>typeof u==='string'&&/^https:\/\/(www\.)?(youtube\.com|youtu\.be|drive\.google\.com|vimeo\.com|facebook\.com|fb\.watch)\//.test(u);
+const decada=a=>String(Math.floor(a/10));
+const corto=s=>{s=String(s||'').trim();if(s.length<=60)return s;const c=s.slice(0,59),i=c.lastIndexOf(' ');return (i>30?c.slice(0,i):c).trimEnd()+'…'};
+
+let tOk;
+function aviso(txt,error){
+ ok.textContent=txt;ok.classList.toggle('err',!!error);ok.hidden=false;
+ clearTimeout(tOk);tOk=setTimeout(()=>ok.hidden=true,error?10000:9000);
+}
+
+/* ---------- datos ---------- */
+function convertir(d){
+ const x=d.data(),anio=+x.anio;
+ if(!okUrl(x.imagen)||!(anio>=1980&&anio<=2100))return null;
+ return {
+  id:d.id,anio,d:decada(anio),
+  c:corto(x.descripcion),desc:String(x.descripcion||''),nom:String(x.nombre||''),
+  r:/^\d{1,5}\/\d{1,5}$/.test(x.ratio||'')?x.ratio:'4/3',
+  u:x.imagen,th:okUrl(x.miniatura)?x.miniatura:'',video:okVideo(x.video)?x.video:''
+ };
+}
+function armar(){P=[...sesion,...nube,...BASE];draw()}
+async function traer(){
+ try{
+  const docs=await NUBE.aprobados('archivo',200);
+  nube=docs.map(convertir).filter(Boolean);
+  falloNube=false;
+ }catch(e){console.error(e);falloNube=true}
+ cargando=false;
+ armar();
+}
+
+/* ---------- galería ---------- */
+function draw(){
+ mas.innerHTML='';
+ P.forEach(o=>{
+  if(f!=='all'&&o.d!==f)return;
+  const b=document.createElement('div');b.className='ph';b.tabIndex=0;b.setAttribute('role','button');b.style.aspectRatio=o.r;
+  const fg=document.createElement('figure');fg.className='slot';
+  if(o.u){
+   const im=document.createElement('img');im.src=o.th||o.u;im.alt=o.c;im.loading='lazy';im.decoding='async';fg.append(im);
+  }else{
+   if(o.k)fg.dataset.slot=o.k;
+   fg.innerHTML='<i class="fa-regular fa-image"></i>';
+  }
+  const cp=document.createElement('span');cp.className='cp';
+  cp.textContent=o.nom?o.c+' · '+o.anio+' · '+o.nom+(o.pend?' · En revisión':''):o.c+' · '+o.d+'0s';
+  b.append(fg,cp);
+  b.onclick=()=>{
+   openM({n:o.c,r:o.nom?o.anio+' · Aportó '+o.nom+(o.pend?' · En revisión':''):o.d+'0s',d:o.desc||'Describe aquí el evento, la fecha y las personas que aparecen en la imagen.',k:o.k||'',th:false});
+   pintarModal(o);
+  };
+  mas.append(b);
+ });
+ refreshTabs();
+ aplicar();
+}
 function refreshTabs(){
  tabs.forEach(b=>{
   const n=b.dataset.f==='all'?P.length:P.filter(o=>o.d===b.dataset.f).length;
@@ -81,23 +137,118 @@ function refreshTabs(){
   b.setAttribute('aria-pressed',String(b.classList.contains('on')));
  });
 }
-
-const q=$('#q');
 function aplicar(){
  const t=q.value.trim().toLowerCase();
  let vis=0;
- mas.querySelectorAll('.ph').forEach(el=>{const ok=!t||el.textContent.toLowerCase().includes(t);el.hidden=!ok;if(ok)vis++});
- $('#estado').textContent=vis?`Mostrando ${vis} ${vis===1?'recuerdo':'recuerdos'}`:'';
+ mas.querySelectorAll('.ph').forEach(el=>{const v=!t||el.textContent.toLowerCase().includes(t);el.hidden=!v;if(v)vis++});
+ let txt=cargando?'Cargando recuerdos de la comunidad…':(vis?`Mostrando ${vis} ${vis===1?'recuerdo':'recuerdos'}`:'');
+ if(falloNube)txt+=(txt?' · ':'')+'No se pudieron cargar los recuerdos de la comunidad';
+ $('#estado').textContent=txt;
  let vacio=mas.querySelector('.empty');
  if(!vis&&!vacio){vacio=document.createElement('p');vacio.className='empty';vacio.textContent='Nada coincide en esta época. Prueba otra palabra o cambia de década.';mas.append(vacio)}
  else if(vis&&vacio)vacio.remove();
 }
+tabs.forEach(b=>b.addEventListener('click',()=>{
+ f=b.dataset.f;
+ tabs.forEach(x=>x.classList.toggle('on',x===b));
+ draw();
+}));
 q.addEventListener('input',aplicar);
-tabs.forEach(b=>b.addEventListener('click',()=>{refreshTabs();aplicar()}));
-$('#f').addEventListener('submit',()=>setTimeout(()=>{refreshTabs();aplicar()},0));
 
-const fl=$('#fl');
-fl.addEventListener('change',()=>{const f=fl.files[0];fl.setCustomValidity(f&&f.size>100*1024*1024?'El archivo pasa de 100 MB. Usa una versión más ligera o compártenos un enlace.':'')});
+/* ---------- envío: ImgBB (imagen) + Firestore (datos) ---------- */
+fl.addEventListener('change',()=>{
+ const a=fl.files[0];
+ fl.setCustomValidity(a&&a.size>MAX_ORIG?'La foto pasa de 40 MB. Usa una versión más ligera.':'');
+});
+
+async function reducir(archivo){
+ let bmp;
+ try{bmp=await createImageBitmap(archivo)}
+ catch(_){
+  bmp=await new Promise((res,rej)=>{
+   const u=URL.createObjectURL(archivo),im=new Image();
+   im.onload=()=>{URL.revokeObjectURL(u);res(im)};
+   im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('formato'))};
+   im.src=u;
+  });
+ }
+ const w0=bmp.width||bmp.naturalWidth,h0=bmp.height||bmp.naturalHeight;
+ const k=Math.min(1,LADO/Math.max(w0,h0)),w=Math.round(w0*k),h=Math.round(h0*k);
+ const c=document.createElement('canvas');c.width=w;c.height=h;
+ const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(bmp,0,0,w,h);
+ if(bmp.close)bmp.close();
+ const blob=await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('convertir')),'image/jpeg',.85));
+ return {blob,w,h};
+}
+
+form.addEventListener('submit',async e=>{
+ e.preventDefault();
+ if(hp.value)return;
+ if(!KEY){aviso('El envío de fotografías todavía no está configurado.',true);return}
+ const archivo=fl.files[0],video=$('#vd').value.trim();
+ if(!archivo||!archivo.type.startsWith('image/')){aviso('Elige una fotografía (JPG, PNG o WebP).',true);return}
+ if(video&&!okVideo(video)){aviso('El enlace del video debe ser de YouTube, Google Drive, Vimeo o Facebook.',true);return}
+ let ult=0;
+ try{ult=+localStorage.getItem(KT)||0}catch(_){}
+ if(Date.now()-ult<ESPERA){aviso('Espera un momento antes de enviar otro recuerdo.',true);return}
+ const nombre=$('#nm').value.trim(),anio=parseInt($('#yr').value,10),desc=$('#ds').value.trim();
+ const huella=[archivo.name,archivo.size,archivo.lastModified].join('|');
+ btn.disabled=true;btn.textContent='Enviando…';
+ try{
+  if(!subida||subida.huella!==huella){
+   let r;
+   try{r=await reducir(archivo)}catch(_){throw Object.assign(new Error('formato'),{amigable:'No pudimos leer esa imagen. Prueba con una foto JPG o PNG.'})}
+   const fd=new FormData();fd.append('image',r.blob,'recuerdo.jpg');
+   const resp=await fetch('https://api.imgbb.com/1/upload?key='+encodeURIComponent(KEY),{method:'POST',body:fd});
+   const j=await resp.json().catch(()=>null);
+   if(!resp.ok||!j||!j.success)throw new Error('imgbb '+resp.status);
+   subida={huella,url:j.data.display_url,thumb:(j.data.medium&&j.data.medium.url)||'',ratio:r.w+'/'+r.h};
+  }
+  if(!okUrl(subida.url))throw new Error('url inesperada');
+  const S=await NUBE.cargar();
+  const reg={nombre,anio,descripcion:desc,imagen:subida.url,ratio:subida.ratio,consentimiento:true,aprobado:false,creado:S.serverTimestamp()};
+  if(okUrl(subida.thumb))reg.miniatura=subida.thumb;
+  if(video)reg.video=video;
+  await S.addDoc(S.collection(S.db,'archivo'),reg);
+  sesion.unshift({c:corto(desc),desc,d:decada(anio),anio,nom:nombre,r:subida.ratio,u:subida.url,th:subida.thumb,video,pend:true});
+  try{localStorage.setItem(KT,String(Date.now()))}catch(_){}
+  subida=null;
+  form.reset();
+  armar();
+  aviso('Gracias. Tu recuerdo fue recibido y se publicará cuando sea revisado.');
+ }catch(err){
+  console.error(err);
+  aviso(err.amigable||'No pudimos enviar tu recuerdo. Revisa tu conexión e inténtalo de nuevo; lo que escribiste sigue aquí.',true);
+ }finally{
+  btn.disabled=false;btn.innerHTML=btnHTML;
+ }
+});
+
+/* ---------- visor (modal) ---------- */
+const mbox=modal.querySelector('.mbox');
+mbox.insertAdjacentHTML('beforeend','<button class="mnav mprev" type="button" aria-label="Foto anterior"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><button class="mnav mnext" type="button" aria-label="Foto siguiente"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>');
+const sh=document.createElement('button');
+sh.type='button';sh.className='mshare';
+sh.innerHTML='<i class="fa-solid fa-link" aria-hidden="true"></i><span>Copiar enlace</span>';
+mbox.querySelector('.mtxt').append(sh);
+sh.onclick=async()=>{
+ const txt=sh.querySelector('span');
+ try{await navigator.clipboard.writeText(location.href);txt.textContent='¡Enlace copiado!'}
+ catch(_){txt.textContent='Copia la dirección de la barra'}
+ setTimeout(()=>txt.textContent='Copiar enlace',2200);
+};
+function pintarModal(o){
+ const mi=$('#mImg');
+ mi.textContent='';
+ if(o.u){const im=document.createElement('img');im.src=o.u;im.alt=o.c;mi.append(im)}
+ else mi.innerHTML='<i class="fa-regular fa-image"></i>';
+ mbox.querySelectorAll('.mvid').forEach(x=>x.remove());
+ if(o.video){
+  const a=document.createElement('a');a.className='mshare mvid';a.href=o.video;a.target='_blank';a.rel='noopener noreferrer';
+  a.innerHTML='<i class="fa-solid fa-circle-play" aria-hidden="true"></i><span>Ver video</span>';
+  sh.before(a);
+ }
+}
 
 let cur=0,lastF=null;
 mas.addEventListener('click',e=>{
@@ -110,8 +261,6 @@ mas.addEventListener('click',e=>{
 mas.addEventListener('keydown',e=>{
  if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('ph')){e.preventDefault();e.target.click()}
 });
-const mbox=modal.querySelector('.mbox');
-mbox.insertAdjacentHTML('beforeend','<button class="mnav mprev" type="button" aria-label="Foto anterior"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><button class="mnav mnext" type="button" aria-label="Foto siguiente"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>');
 function paso(d){
  const v=[...mas.querySelectorAll('.ph:not([hidden])')];
  if(!v.length)return;
@@ -128,28 +277,13 @@ addEventListener('keydown',e=>{
  if(e.key==='Escape')volver();
  if(e.key==='ArrowRight')paso(1);
  if(e.key==='ArrowLeft')paso(-1);
- if(e.key==='Tab'){
-  const f=[...modal.querySelectorAll('button')];
-  const a=f[0],z=f[f.length-1];
-  if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}
-  else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}
- }
 });
 
+const prog=document.createElement('div');prog.id='prog';document.body.prepend(prog);
+addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight||1;prog.style.width=(scrollY/max*100)+'%'},{passive:true});
 
-const sh=document.createElement('button');
-sh.type='button';sh.className='mshare';
-sh.innerHTML='<i class="fa-solid fa-link" aria-hidden="true"></i><span>Copiar enlace</span>';
-mbox.querySelector('.mtxt').append(sh);
-sh.onclick=async()=>{
- const txt=sh.querySelector('span');
- try{await navigator.clipboard.writeText(location.href);txt.textContent='¡Enlace copiado!'}
- catch(_){txt.textContent='Copia la dirección de la barra'}
- setTimeout(()=>txt.textContent='Copiar enlace',2200);
-};
-
-refreshTabs();
-aplicar();
+armar();
+traer();
 });
 </script>
 </body>
