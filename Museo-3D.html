@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7a122e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icono-192.png">
+<link rel="apple-touch-icon" href="icono-192.png">
+<meta name="description" content="Recorre el Museo Digital del CETIS 69 en primera persona desde tu computadora o tu celular.">
+<meta property="og:title" content="Recorrido Virtual | Museo Digital CETIS 69">
+<meta property="og:description" content="Camina por el museo del CETIS 69 en Ciudad Obregón.">
+<meta property="og:type" content="website">
+<title>Recorrido Virtual | Museo Digital CETIS 69</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+<link rel="stylesheet" href="estilos.css">
+<link rel="stylesheet" href="museo.css">
+<meta property="og:site_name" content="Museo Digital CETIS 69">
+<meta property="og:locale" content="es_MX">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Recorrido Virtual | Museo Digital CETIS 69">
+<meta name="twitter:description" content="Camina por el museo del CETIS 69 en Ciudad Obregón.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Recorrido Virtual | Museo Digital CETIS 69","description":"Recorre el Museo Digital del CETIS 69 en primera persona desde tu computadora o tu celular.","inLanguage":"es-MX","about":{"@type":"Museum","name":"Museo Digital CETIS 69","address":{"@type":"PostalAddress","addressLocality":"Ciudad Obregón","addressRegion":"Sonora","addressCountry":"MX"}}}</script>
+<style id="mejoras">
+.x-info{max-width:72rem;margin:0 auto;padding:clamp(3rem,7vw,5rem) clamp(1.2rem,4vw,2.5rem)}
+.x-info h2.x-sub{font-size:clamp(1.1rem,2.4vw,1.5rem);margin:0 0 1rem}
+.x-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem;margin-bottom:2.5rem}
+.x-grid article{border:1px solid var(--linea,#e6dcdc);padding:1.2rem}
+.x-grid i{color:var(--guinda,#7a122e);font-size:1.3rem}
+.x-grid h3{font-size:.95rem;font-weight:600;margin:.7rem 0 .4rem}
+.x-grid p,.x-info details p{font-size:.88rem;line-height:1.65;margin:0;max-width:62ch}
+.x-info details{border-top:1px solid var(--linea,#e6dcdc)}
+.x-info details:last-of-type{border-bottom:1px solid var(--linea,#e6dcdc)}
+.x-info summary{cursor:pointer;padding:1rem 0;font-weight:600;font-size:.92rem}
+.x-info details p{padding:0 0 1rem}
+.x-compartir{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem}
+.x-btn{font:inherit;font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:.8rem 1.2rem;border:1px solid var(--guinda,#7a122e);background:transparent;color:var(--guinda,#7a122e);cursor:pointer;text-decoration:none;display:inline-flex;gap:.5rem;align-items:center}
+.x-btn:hover,.x-btn:focus-visible{background:var(--guinda,#7a122e);color:#fff}
+.kiosco .extras,.kiosco .x-compartir{display:none!important}
+.extras{position:absolute;z-index:19;left:max(.9rem,env(safe-area-inset-left));top:calc(max(.9rem,env(safe-area-inset-top)) + 3.6rem);display:none;flex-direction:column;gap:.5rem}
+.visor.inmersivo .extras{display:flex}
+.extras button{width:2.75rem;height:2.75rem;background:rgba(26,6,13,.62);backdrop-filter:blur(6px);color:#fff;border:1px solid rgba(255,255,255,.28);cursor:pointer;font-size:.95rem}
+.extras button:hover,.extras button:focus-visible{background:rgba(122,18,46,.7)}
+#avisos{position:fixed;z-index:10001;left:50%;bottom:max(1.2rem,env(safe-area-inset-bottom));transform:translate(-50%,1rem);display:flex;align-items:center;gap:.8rem;max-width:min(32rem,92vw);padding:.8rem 1rem;background:rgba(26,6,13,.94);color:#fff;border:1px solid #e8a5b4;font-size:.78rem;line-height:1.45;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}
+#avisos.x-ver{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#avisos button{font:inherit;font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.45rem .7rem;background:#7a122e;color:#fff;border:1px solid rgba(255,255,255,.4);cursor:pointer}
+@media (prefers-reduced-motion:reduce){#avisos{transition:none}}
+</style>
+</head>
+<body data-menu="recorrido" data-carga="900" data-reveal="inmediato" data-umbral=".12">
+<a href="#recorrido" class="skip">Saltar al contenido</a>
+
+<div id="loader"><div class="ld"><h2>CETIS 69</h2><p>MUSEO DIGITAL</p><div class="bar"><i></i></div></div></div>
+
+<nav id="nav"></nav>
+
+<noscript><p style="padding:6rem 1.5rem 1rem;text-align:center">Este recorrido necesita JavaScript activado para funcionar.</p></noscript>
+<section id="recorrido">
+ <div class="rv">
+  <div class="eyebrow">Recorrido virtual</div>
+  <h1 class="title">Camina por el <b>museo</b></h1>
+  <p class="lead">Explora las salas del Museo Digital CETIS 69 en primera persona, desde tu computadora o tu celular.</p>
+ </div>
+
+ <div class="visor" id="visor">
+  <div id="escena"></div>
+  <div class="mira"></div>
+  <canvas class="mapa" id="mapa" width="300" height="300"></canvas>
+  <div class="joystick" id="joystick"><div class="perilla" id="perilla"></div></div>
+
+  <div class="hud">
+   <button type="button" class="pausa" id="pausar"><i class="fa-solid fa-pause"></i> Pausa</button>
+   <div class="derecha">
+    <button type="button" id="botonHerr" class="oculto"><i class="fa-solid fa-screwdriver-wrench"></i> Admin</button>
+    <button type="button" id="botonMapa"><i class="fa-solid fa-map"></i> Mapa<span class="solo-pc"> · Tab</span></button>
+    <button type="button" id="botonGuia" aria-label="Guía rápida">?<span class="solo-pc"> · H</span></button>
+    <button type="button" id="botonVuelo"><i class="fa-solid fa-dove"></i> Vuelo<span class="solo-pc"> · F</span></button>
+    <button type="button" id="sonido">Sonido</button>
+    <div class="ambientes" id="ambientes" role="group" aria-label="Iluminación">
+     <button type="button" data-a="dia">Día</button>
+     <button type="button" data-a="galeria">Atardecer</button>
+     <button type="button" data-a="noche">Noche</button>
+    </div>
+   </div>
+  </div>
+
+  <div class="cargando" id="cargando">
+   <div class="motas" id="motas"></div>
+   <div class="tarjeta-carga">
+     <div class="orbe">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+       <circle class="a1" cx="100" cy="100" r="94" fill="none" stroke="#e8a5b4" stroke-width="2.5" stroke-dasharray="60 40 8 40" stroke-linecap="round"/>
+       <circle class="a2" cx="100" cy="100" r="78" fill="none" stroke="#ffffff" stroke-opacity=".6" stroke-width="1.5" stroke-dasharray="3 9"/>
+       <circle class="a3" cx="100" cy="100" r="62" fill="none" stroke="#c0304f" stroke-width="4" stroke-dasharray="90 300" stroke-linecap="round"/>
+      </svg>
+      <b id="porcentaje">0%</b>
+     </div>
+     <div class="info-carga">
+       <h3>CETIS 69</h3>
+       <p id="estado" aria-live="polite">Cargando el museo</p>
+       <div class="barra" role="progressbar" aria-label="Carga del museo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progreso"></i></div>
+       <small id="consejo"></small>
+     </div>
+   </div>
+  </div>
+
+  <div class="cubierta oculto" id="cubierta">
+   <div class="eyebrow">Museo Digital</div>
+   <h2 class="title">Recorrido <b>virtual</b></h2>
+   <p class="lead">Camina libremente por el museo y cambia la iluminación para verlo de día, al atardecer o de noche.</p>
+   <p class="lead">Dentro encontrarás una guía rápida y un mapa para ir directo a cualquier lugar.</p>
+   <div class="acciones">
+    <button type="button" class="btn sec oculto" id="botonAcceso">Acceso admin</button>
+    <button type="button" class="btn" id="entrar"><span id="textoEntrar">Entrar al museo</span> <i class="fa-solid fa-arrow-right-long"></i></button>
+    <button type="button" class="btn sec oculto" id="salir">Salir</button>
+   </div>
+  </div>
+
+  <div class="extras" id="extras">
+   <button type="button" id="x-fs" aria-label="Pantalla completa" title="Pantalla completa"><i class="fa-solid fa-expand"></i></button>
+   <button type="button" id="x-share" aria-label="Compartir el recorrido" title="Compartir"><i class="fa-solid fa-share-nodes"></i></button>
+  </div>
+  <div id="badgeVuelo" class="oculto"></div>
+  <div id="controlesVuelo">
+   <button type="button" id="botonSubir" aria-label="Subir"><i class="fa-solid fa-arrow-up"></i></button>
+   <button type="button" id="botonBajar" aria-label="Bajar"><i class="fa-solid fa-arrow-down"></i></button>
+  </div>
+  <div id="sugerencia" class="oculto"></div>
+  <button type="button" class="btn sec oculto" id="botonSentar"></button>
+
+  <div class="mv-modal oculto" id="panelInfo" role="dialog" aria-modal="true" aria-labelledby="infoTitulo">
+   <div class="mv-tarjeta">
+    <button type="button" class="mv-cerrar" id="cerrarInfo" aria-label="Cerrar">&#10005;</button>
+    <small id="infoEtiqueta"></small>
+    <h3 id="infoTitulo"></h3>
+    <div id="infoCuerpo"></div>
+   </div>
+  </div>
+
+  <div class="mv-modal oculto" id="mapaGrande" role="dialog" aria-modal="true" aria-label="Mapa del museo">
+   <div class="mv-mapa-caja">
+    <canvas id="mapaCanvas" width="900" height="900"></canvas>
+    <div class="mv-tarjeta mv-lateral">
+     <button type="button" class="mv-cerrar" id="cerrarMapa" aria-label="Cerrar">&#10005;</button>
+     <small>Mapa del museo</small>
+     <h3>¿A dónde quieres ir?</h3>
+     <div class="paradas-bloque oculto" id="paradasBloque">
+      <div class="paradas" id="paradas"></div>
+     </div>
+     <p class="nota">Toca un punto del mapa o un botón de la lista.</p>
+    </div>
+   </div>
+  </div>
+
+  <div class="mv-modal oculto" id="guia" role="dialog" aria-modal="true" aria-labelledby="guiaTitulo">
+   <div class="mv-tarjeta">
+    <button type="button" class="mv-cerrar" id="cerrarGuia" aria-label="Cerrar">&#10005;</button>
+    <small>Guía rápida</small>
+    <h3 id="guiaTitulo">Cómo recorrer el museo</h3>
+    <div class="mv-guia-grid" id="guiaGrid"></div>
+    <button type="button" class="btn" id="guiaOk" style="margin-top:1.1rem">Entendido</button>
+   </div>
+  </div>
+
+  <div class="mv-modal oculto" id="loginAdmin" role="dialog" aria-modal="true" aria-labelledby="loginTitulo">
+   <div class="mv-tarjeta">
+    <button type="button" class="mv-cerrar" id="cerrarLogin" aria-label="Cerrar">&#10005;</button>
+    <small>Acceso administrador</small>
+    <h3 id="loginTitulo">Iniciar sesión</h3>
+    <div class="pp-col">
+     <input type="email" id="loginCorreo" placeholder="Correo" autocomplete="username">
+     <input type="password" id="loginClave" placeholder="Contraseña" autocomplete="current-password">
+    </div>
+    <p class="pp-txt" id="loginMsg"></p>
+    <button type="button" class="btn" id="loginEntrar">Entrar</button>
+   </div>
+  </div>
+
+  <div id="panelPro" class="oculto">
+   <div class="pp-fila"><b style="letter-spacing:.2em">HERRAMIENTAS</b><span style="flex:1"></span><button type="button" id="ppCerrar">&#10005;</button></div>
+   <p class="pp-txt" id="ppEstado"></p>
+   <details open><summary>Colocar vitrina</summary>
+    <div class="pp-fila"><button type="button" data-modo-admin="colocar">Activar colocación</button></div>
+    <p class="pp-txt">Mueve el mouse sobre el piso, gira con la rueda y haz clic para colocarla. Queda guardada y visible para todos. El JSON se copia para pegarlo en puntos.js si lo necesitas.</p>
+   </details>
+   <details open><summary>Seleccionar y mover</summary>
+    <p class="pp-txt" id="ppSel">Haz clic en un objeto del museo para seleccionarlo.</p>
+    <div class="pp-fila">
+     <button type="button" data-gizmo="translate">Mover</button>
+     <button type="button" data-gizmo="rotate">Girar</button>
+     <button type="button" data-gizmo="scale">Escalar</button>
+    </div>
+    <div class="pp-fila">
+     <button type="button" id="ppOcultar">Ocultar / Mostrar</button>
+     <button type="button" id="ppAislar">Aislar</button>
+     <button type="button" id="ppRestablecer">Restablecer</button>
+    </div>
+    <label class="pp-ctl">Color <input type="color" id="ppColor"></label>
+    <label class="pp-ctl">Rugosidad <input type="range" id="ppRug" min="0" max="1" step="0.01" value="0.5"></label>
+    <div class="pp-fila"><button type="button" id="ppGuardarMat">Guardar material</button></div>
+   </details>
+   <details><summary>Colisiones, medidas y foto</summary>
+    <label class="pp-chk"><input type="checkbox" id="ppColis"> Ver colisiones</label>
+    <div class="pp-fila">
+     <button type="button" data-modo-admin="regla" id="ppRegla">Medir distancia</button>
+     <span id="ppReglaOut"></span>
+    </div>
+    <div class="pp-fila"><button type="button" id="ppFoto">Tomar foto</button><button type="button" id="ppVideoSig">Siguiente video</button></div>
+   </details>
+   <details><summary>Rendimiento</summary>
+    <label class="pp-chk"><input type="checkbox" data-fx="sombras" checked> Sombras</label>
+    <label class="pp-chk"><input type="checkbox" data-fx="halos" checked> Halos de luz</label>
+    <label class="pp-chk"><input type="checkbox" data-fx="arboles" checked> Árboles</label>
+    <label class="pp-chk"><input type="checkbox" data-fx="pasto" checked> Pasto</label>
+    <label class="pp-chk"><input type="checkbox" data-fx="video" checked> Video de la pantalla</label>
+    <label class="pp-chk"><input type="checkbox" data-fx="auditorio" checked> Luces del auditorio</label>
+    <label class="pp-chk"><input type="checkbox" data-fx="chorros" checked> Chorros de fuente</label>
+    <label class="pp-ctl">Resolución
+     <select id="ppRes">
+      <option value="auto">Automática</option>
+      <option value="0.5">0.5</option>
+      <option value="0.75">0.75</option>
+      <option value="1">1</option>
+      <option value="1.5">1.5</option>
+      <option value="2">2</option>
+     </select>
+    </label>
+   </details>
+   <details open><summary>Iluminación</summary>
+    <label class="pp-ctl">Hora <output id="ppHoraOut">14:00</output>
+     <input type="range" id="ppHora" min="0" max="24" step="0.1" value="14">
+    </label>
+    <div class="pp-fila">
+     <button type="button" id="ppExp">Exportar JSON</button>
+     <button type="button" id="ppImp">Importar JSON</button>
+     <button type="button" id="ppPub">Publicar a todos</button>
+    </div>
+    <textarea id="ppJson" class="pp-area" placeholder="Pega aquí un preset JSON"></textarea>
+   </details>
+   <details><summary>Lugares guardados</summary>
+    <div class="pp-fila"><button type="button" id="ppParada">Guardar posición</button><button type="button" id="ppExportPts">Exportar puntos.js</button></div>
+    <div id="ppParadas"></div>
+   </details>
+   <details><summary>Luces</summary>
+    <label class="pp-chk"><input type="checkbox" id="ppConos"> Mostrar conos de luz</label>
+    <div id="ppLuces"></div>
+   </details>
+   <div class="pp-fila"><button type="button" id="ppSalirSesion">Cerrar sesión</button></div>
+  </div>
+ </div>
+</section>
+
+<section id="guia-extra" class="x-info rv" aria-labelledby="x-titulo">
+ <div class="eyebrow">Guía rápida</div>
+ <h2 id="x-titulo" class="title">Antes de <b>entrar</b></h2>
+ <div class="x-grid">
+  <article><i class="fa-solid fa-desktop" aria-hidden="true"></i><h3>En computadora</h3><p>Mueve el mouse para mirar y camina con W A S D o las flechas. Tab abre el mapa, H la guía rápida y F activa el vuelo.</p></article>
+  <article><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i><h3>En celular</h3><p>Camina con el joystick de la izquierda y arrastra el dedo para mirar. Gira el teléfono en horizontal para ver más.</p></article>
+  <article><i class="fa-solid fa-gauge-high" aria-hidden="true"></i><h3>Si se ve lento</h3><p>Cierra otras pestañas y usa Chrome, Edge o Safari actualizados. Para una carga más rápida, conéctate a una red estable.</p></article>
+ </div>
+ <h2 class="x-sub">Preguntas frecuentes</h2>
+ <details><summary>¿Por qué no se escucha nada?</summary><p>El navegador activa el audio hasta que presionas «Entrar al museo». Revisa también que el botón Sonido no diga «Silencio» y que el volumen de tu equipo esté arriba. El audio del exterior se escucha cerca de los postes-bocina y el del auditorio dentro de la sala.</p></details>
+ <details><summary>¿Cómo cambio entre día, atardecer y noche?</summary><p>Con los botones Día, Atardecer y Noche de la esquina superior derecha, ya dentro del recorrido.</p></details>
+ <details><summary>¿Puedo ir directo a un lugar?</summary><p>Sí. Abre el Mapa (botón Mapa o tecla Tab) y toca un punto o un botón de la lista.</p></details>
+ <details><summary>¿Funciona sin internet?</summary><p>No. Necesita conexión para descargar el modelo del museo y sus librerías. Una vez dentro, un buen Wi-Fi evita cortes.</p></details>
+ <div class="x-compartir">
+  <button type="button" class="x-btn" id="x-copiar"><i class="fa-solid fa-link" aria-hidden="true"></i> Copiar enlace</button>
+  <a class="x-btn" id="x-wa" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+  <a class="x-btn" href="#recorrido"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i> Volver al recorrido</a>
+ </div>
+</section>
+
+<footer></footer>
+
+<script src="comun.js"></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/","three-mesh-bvh":"https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.7.3/src/index.js"}}
+</script>
+<script type="module" src="museo.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var visor = $("visor"), av = $("avisos"), tAviso;
+  function avisar(msg, ms, btn) {
+    av.replaceChildren();
+    var s = document.createElement("span"); s.textContent = msg; av.appendChild(s);
+    if (btn) { var b = document.createElement("button"); b.type = "button"; b.textContent = btn.texto; b.onclick = btn.fn; av.appendChild(b); }
+    av.classList.add("x-ver"); clearTimeout(tAviso);
+    if (ms) tAviso = setTimeout(function () { av.classList.remove("x-ver"); }, ms);
+  }
+  var url = location.href.split("#")[0];
+  function copiar() {
+    var ok = function () { avisar("Enlace copiado", 3000); };
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(ok, ok);
+    else { var i = document.createElement("input"); i.value = url; document.body.appendChild(i); i.select(); try { document.execCommand("copy"); } catch (e) {} i.remove(); ok(); }
+  }
+  function compartir() {
+    if (navigator.share) navigator.share({ title: document.title, text: "Recorre el Museo Digital del CETIS 69 en 3D", url: url }).catch(function (e) { if (e && e.name !== "AbortError") copiar(); });
+    else copiar();
+  }
+  $("x-copiar").onclick = copiar; $("x-share").onclick = compartir;
+  $("x-wa").href = "https://wa.me/?text=" + encodeURIComponent("Recorre el Museo Digital del CETIS 69 en 3D: " + url);
+
+  var bFs = $("x-fs");
+  if (!(document.fullscreenEnabled || document.webkitFullscreenEnabled)) bFs.classList.add("oculto");
+  bFs.onclick = function () {
+    var en = document.fullscreenElement || document.webkitFullscreenElement, p;
+    if (en) p = (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else {
+      p = (visor.requestFullscreen || visor.webkitRequestFullscreen).call(visor);
+      if (p && p.then && visor.classList.contains("tactil") && screen.orientation && screen.orientation.lock) p.then(function () { screen.orientation.lock("landscape").catch(function () {}); });
+    }
+    if (p && p.catch) p.catch(function () {});
+  };
+  ["pointerdown", "mousedown", "touchstart"].forEach(function (ev) { $("extras").addEventListener(ev, function (e) { e.stopPropagation(); }); });
+
+  var lock = null, avisadoGiro = false;
+  function pantalla() {
+    if (!navigator.wakeLock || lock || document.hidden || !visor.classList.contains("inmersivo")) return;
+    navigator.wakeLock.request("screen").then(function (l) { lock = l; l.addEventListener("release", function () { lock = null; }); }, function () {});
+  }
+  new MutationObserver(function () {
+    if (visor.classList.contains("inmersivo")) {
+      pantalla();
+      if (!avisadoGiro && visor.classList.contains("tactil") && matchMedia("(orientation: portrait)").matches) { avisadoGiro = true; avisar("Gira tu celular en horizontal para ver más del museo.", 6000); }
+    } else if (lock) lock.release();
+  }).observe(visor, { attributes: true, attributeFilter: ["class"] });
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) pantalla(); });
+
+  window.addEventListener("offline", function () { avisar("Sin conexión. Si el museo aún no ha cargado, no podrá abrir.", 0); });
+  window.addEventListener("online", function () { avisar("Conexión restablecida", 3000); });
+  try { var c = document.createElement("canvas"); if (!(c.getContext("webgl2") || c.getContext("webgl"))) throw 0; }
+  catch (e) { avisar("Tu navegador no tiene WebGL activo, necesario para el recorrido. Actívalo o prueba con Chrome, Edge o Safari actualizados.", 0); }
+  if (navigator.connection && navigator.connection.saveData) avisar("Ahorro de datos activo: el museo pesa varios MB.", 6000);
+
+  var car = $("cargando");
+  setTimeout(function () {
+    if (!car || car.classList.contains("oculto")) return;
+    avisar("La carga está tardando. Revisa tu conexión; si sigue igual, recarga la página.", 0, { texto: "Recargar", fn: function () { location.reload(); } });
+    new MutationObserver(function (_, o) { if (car.classList.contains("oculto")) { av.classList.remove("x-ver"); o.disconnect(); } }).observe(car, { attributes: true, attributeFilter: ["class"] });
+  }, 25000);
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "/" && visor.classList.contains("inmersivo")) e.stopPropagation();
+  }, true);
+})();
+</script>
+<div id="avisos" role="status" aria-live="polite"></div>
+</body>
+</html>

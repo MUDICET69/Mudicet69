@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7a122e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icono-192.png">
+<link rel="apple-touch-icon" href="icono-180.png">
+<meta name="description" content="Museo digital del CETIS 69 en Ciudad Obregón: historia, línea del tiempo, docentes, proyectos y exalumnos.">
+<meta property="og:title" content="Museo Digital CETIS 69">
+<meta property="og:description" content="46 años de historia del CETIS 69 en Ciudad Obregón.">
+<meta property="og:type" content="website">
+<title>Museo Digital CETIS 69</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+<link rel="stylesheet" href="estilos.css">
+<style>
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--guinda),#e8a5b4);z-index:95;transition:width .12s linear}
+.skip{position:absolute;left:-999px;top:0;z-index:300;background:#fff;color:var(--guinda);padding:.7rem 1.1rem;font-size:.75rem;letter-spacing:.12em;font-weight:600}
+.skip:focus{left:1rem;top:1rem}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:-1px;padding:0;border:0}
+.chip{display:inline-flex;align-items:center;gap:.5rem;margin:.3rem .35rem .3rem 0;padding:.5rem .9rem;border:1px solid var(--linea);background:#fff;font-size:.72rem;letter-spacing:.08em;color:var(--guinda);transition:.3s}
+.chip:hover{background:var(--guinda);color:#fff;border-color:var(--guinda)}
+#carreras-inline{margin-top:1.4rem}
+#carreras-inline strong{display:block;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gris);margin-bottom:.6rem}
+.pcard{cursor:pointer}
+.pcard:focus-visible,.tgl:focus-visible,.years button:focus-visible,.btn:focus-visible,.ctrl button:focus-visible{outline:2px solid var(--guinda);outline-offset:3px}
+
+.cifras{background:var(--negro);color:#fff;text-align:center;position:relative;overflow:hidden}
+.cifras::before{content:"";position:absolute;inset:-20%;background:radial-gradient(circle at 20% 30%,rgba(122,18,46,.45),transparent 45%),radial-gradient(circle at 80% 70%,rgba(232,165,180,.16),transparent 40%);pointer-events:none}
+.cifras>*{position:relative}
+.cifras .eyebrow{justify-content:center;color:#f0c9d2}
+.cifras .eyebrow::before{background:#f0c9d2}
+.cifras .title b{color:#e8a5b4}
+.cifras-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;margin-top:3.5rem;background:rgba(255,255,255,.12)}
+.cf{background:var(--negro);padding:2.4rem 1rem;transition:background .4s}
+.cf:hover{background:var(--guinda-d)}
+.cf .num{font-size:clamp(2.6rem,6vw,4.6rem);font-weight:200;color:#e8a5b4;line-height:1;font-variant-numeric:tabular-nums}
+.cf .lbl{margin-top:.8rem;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;opacity:.8}
+.pcard{position:relative;flex:0 0 clamp(220px,24vw,290px);scroll-snap-align:start;display:block;text-align:left;overflow:hidden}
+.pcard .slot{aspect-ratio:3/4;transition:transform .6s}
+.pcard:hover .slot{transform:scale(1.04)}
+.pcard .cap{position:absolute;left:0;right:0;bottom:0;padding:2rem 1.1rem 1.1rem;color:#fff;background:linear-gradient(0deg,rgba(60,6,20,.94),transparent)}
+.pcard h3{font-size:.85rem;font-weight:600;margin-bottom:.2rem}
+.pcard p{font-size:.7rem;letter-spacing:.1em;opacity:.85}
+.pcard .plus{position:absolute;top:.8rem;right:.8rem;width:34px;height:34px;display:grid;place-items:center;background:rgba(255,255,255,.92);color:var(--guinda)}
+.orgullo{display:grid;grid-template-columns:1.7fr 1fr;gap:clamp(2rem,4vw,4rem);align-items:start;margin-top:1rem}
+.orgullo>*{min-width:0}
+.links{display:grid;gap:1rem;margin-top:2.5rem}
+.lk{display:grid;grid-template-columns:48px 1fr 20px;gap:1.1rem;align-items:center;padding:1.3rem 1.4rem;border:1px solid var(--linea);background:#fff;transition:.4s}
+.lk:hover{background:var(--guinda);color:#fff;border-color:var(--guinda);transform:translateX(6px)}
+.lk svg,.lk i{color:var(--guinda);transition:.3s}
+.lk .lki{font-size:1.6rem}
+.lk:hover svg,.lk:hover i,.lk:hover p{color:#fff}
+.lk h3{font-size:.85rem;font-weight:600;margin-bottom:.2rem}
+.lk p{font-size:.76rem;color:var(--gris)}
+.hero-acc{display:flex;flex-wrap:wrap;gap:.8rem}
+.hero .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.75)}
+.hero .btn.ghost:hover{background:#fff;color:var(--guinda);border-color:#fff}
+.hero .btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@media (max-width:960px){.orgullo{grid-template-columns:1fr}}
+@media (min-width:961px) and (max-width:1220px){.menu{gap:1.1rem}.menu a{font-size:.6rem;letter-spacing:.12em}}
+</style>
+</head>
+<body data-menu="inicio" data-carga="1700" data-reveal="inmediato" data-umbral=".12">
+<a href="#historia" class="skip">Saltar al contenido</a>
+
+<div id="loader"><div class="ld"><h2>CETIS 69</h2><p>MUSEO DIGITAL</p><div class="bar"><i></i></div></div></div>
+
+<nav id="nav"></nav>
+
+<header class="hero" id="inicio">
+ <figure class="slot" data-slot="hero-fondo"><img src="hero-fachada.jpg" alt="Fachada del CETIS 69" fetchpriority="high"></figure>
+ <div class="hero-in rv">
+  <div class="eyebrow" style="color:#f0c9d2"><span style="display:none"></span>Museo Digital</div>
+  <h1>CETIS <em>69</em></h1>
+  <p>46 años de historia · Ciudad Obregón</p>
+  <div class="hero-acc"><a href="#historia" class="btn">Comenzar <i class="fa-solid fa-arrow-right-long"></i></a><a href="Museo-3D.html" class="btn ghost">Recorrido 3D <i class="fa-solid fa-cube" aria-hidden="true"></i></a></div>
+ </div>
+ <a href="#historia" class="scroll" aria-label="Bajar"><i class="fa-solid fa-chevron-down"></i></a>
+</header>
+
+<section class="historia" id="historia">
+  
+  <div class="h-grid" role="region" aria-label="Galería de momentos históricos del CETIS 69">
+    <figure class="slot" data-slot="historia-1" data-period="1980s" role="img" aria-label="Inauguración del CETIS 69 en los años 80">
+      <img onerror="this.remove()" src="panteras.JPG" alt="Inauguración del CETIS 69 en los años 80" loading="lazy">
+      <figcaption class="sr-only">Período: Años 80 - Fundación</figcaption>
+    </figure>
+    
+    <figure class="slot" data-slot="historia-2" data-period="1990s" role="img" aria-label="Expansión de CETIS 69 en los años 90">
+      <img onerror="this.remove()" src="baile.jpg" alt="Expansión de CETIS 69 en los años 90" loading="lazy">
+      <figcaption class="sr-only">Período: Años 90 - Crecimiento</figcaption>
+    </figure>
+    
+    <figure class="slot" data-slot="historia-3" data-period="2000s" role="img" aria-label="Modernización de CETIS 69 en los años 2000">
+      <img onerror="this.remove()" src="alumnos.jpg" alt="Modernización de CETIS 69 en los años 2000" loading="lazy">
+      <figcaption class="sr-only">Período: Años 2000 - Modernización</figcaption>
+    </figure>
+    
+    <figure class="slot" data-slot="historia-4" data-period="2010s" role="img" aria-label="CETIS 69 en la era digital, años 2010 a la actualidad">
+      <img onerror="this.remove()" src="comunidad.jpg" alt="CETIS 69 en la era digital, años 2010 a la actualidad" loading="lazy">
+      <figcaption class="sr-only">Período: Años 2010 a hoy - Era Digital</figcaption>
+    </figure>
+  </div>
+  
+  
+  <div class="h-card rv">
+    <div class="eyebrow">Archivo histórico</div>
+    <h2 class="title">Historia del <b>CETIS 69</b></h2>
+    <p class="lead">Casi cinco décadas formando técnicos y profesionistas en Ciudad Obregón. Recorre las generaciones, los maestros y los momentos que dieron identidad a nuestra institución.</p>
+    <a href="#linea" class="btn" aria-label="Explorar la línea del tiempo completa del CETIS 69">
+      Explorar 
+      <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+    </a>
+  </div>
+</section>
+
+<section class="tl" id="linea">
+  <div class="tl-head rv">
+    <div>
+      <div class="eyebrow">Línea del tiempo</div>
+      <h2 class="title">Elige una <b>generación</b></h2>
+    </div>
+    <p class="lead">Al seleccionar un año, las secciones de oferta educativa y docentes se actualizan a esa época.</p>
+  </div>
+  
+  <div class="years" id="years" role="group" aria-label="Selecciona un año"></div>
+  
+  <div class="tl-body rv">
+    <div class="tl-text">
+      <h3 id="tlTitle"></h3>
+      <p id="tlText"></p>
+      <div class="carreras-inline" id="carreras-inline" role="region" aria-label="Especialidades del período seleccionado"></div>
+    </div>
+    <figure class="slot" data-slot="linea-hito" role="img" aria-label="Imagen del hito histórico">
+      <img id="hito-imagen" alt="" loading="lazy" hidden>
+      <span class="tag">Imagen del hito</span>
+    </figure>
+  </div>
+</section>
+
+<section class="oferta" id="oferta">
+ <div class="rv">
+  <div class="eyebrow">Oferta educativa</div>
+  <h2 class="title">Especialidades de <b id="ofYear"></b></h2>
+  <p class="lead">Las especialidades que se impartían en la época seleccionada.</p>
+ </div>
+ <div class="specs rv" id="specs"></div>
+</section>
+
+<section class="doc" id="docentes">
+ <div class="rv">
+  <div class="eyebrow">Docentes</div>
+  <h2 class="title">Maestros a través del <b>tiempo</b></h2>
+ </div>
+ <div class="car rv">
+  <div class="ctrl"><button id="prev" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button><button id="next" aria-label="Siguiente"><i class="fa-solid fa-chevron-right"></i></button></div>
+  <div class="track" id="track"></div>
+ </div>
+</section>
+
+<section class="info" id="archivo">
+ <div class="rv">
+  <div class="eyebrow">Archivo visual</div>
+  <h2 class="title">Imágenes con <b>información</b></h2>
+  <p class="lead">Selecciona cada imagen para conocer más sobre ella.</p>
+ </div>
+ <div class="info-grid">
+  <article class="ic rv"><figure class="slot" data-slot="archivo-1"><i class="fa-regular fa-image"></i></figure><div class="ic-b"><h3>Título de la imagen</h3><p>Breve descripción del registro histórico.</p><div class="more"><p>Información ampliada: fecha, lugar, personas y contexto del registro.</p></div><button class="tgl">Ver más <i class="fa-solid fa-plus"></i></button></div></article>
+  <article class="ic rv"><figure class="slot" data-slot="archivo-2"><i class="fa-regular fa-image"></i></figure><div class="ic-b"><h3>Título de la imagen</h3><p>Breve descripción del registro histórico.</p><div class="more"><p>Información ampliada: fecha, lugar, personas y contexto del registro.</p></div><button class="tgl">Ver más <i class="fa-solid fa-plus"></i></button></div></article>
+  <article class="ic rv"><figure class="slot" data-slot="archivo-3"><i class="fa-regular fa-image"></i></figure><div class="ic-b"><h3>Título de la imagen</h3><p>Breve descripción del registro histórico.</p><div class="more"><p>Información ampliada: fecha, lugar, personas y contexto del registro.</p></div><button class="tgl">Ver más <i class="fa-solid fa-plus"></i></button></div></article>
+ </div>
+</section>
+
+<div class="two" id="eventos">
+ <div class="eventos rv">
+  <div class="eyebrow">Eventos del CETIS</div>
+  <h2 class="title">Nuestra <b>vida</b> escolar</h2>
+  <ul class="list" id="evLista"></ul>
+ </div>
+ <div class="proy rv">
+  <div class="eyebrow">Proyectos de estudiantes</div>
+  <h2 class="title">Talento <b>técnico</b></h2>
+  <ul class="list" id="pyLista"></ul>
+ </div>
+</div>
+
+
+<section id="exalumnos">
+ <div class="rv">
+  <div class="eyebrow">Orgullo CETIS 69</div>
+  <h2 class="title">Exalumnos y alumnos <b>destacados</b></h2>
+  <p class="lead">Selecciona una tarjeta para conocer qué hizo cada persona, cuándo lo logró y ver más imágenes.</p>
+ </div>
+ <div class="orgullo rv">
+  <div class="car" style="margin-top:0">
+   <div class="ctrl"><button data-t="trkEx" data-d="-1" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button><button data-t="trkEx" data-d="1" aria-label="Siguiente"><i class="fa-solid fa-chevron-right"></i></button></div>
+   <div class="track" id="trkEx"></div>
+  </div>
+  <div>
+   <div class="eyebrow" style="margin-top:2.6rem">Explora más</div>
+   <div class="links">
+    <a class="lk" href="Museo-3D.html"><i class="fa-solid fa-cube lki"></i><div><h3>Recorrido virtual 3D</h3><p>Camina por el museo</p></div><i class="fa-solid fa-arrow-right-long"></i></a>
+    <a class="lk" href="mapa-360.html"><i class="fa-solid fa-street-view lki"></i><div><h3>Mapa interactivo 360°</h3><p>Recorre el plantel</p></div><i class="fa-solid fa-arrow-right-long"></i></a>
+    <a class="lk" href="archivo-fotografico.html"><i class="fa-solid fa-camera-retro lki"></i><div><h3>Archivo fotográfico</h3><p>Manda tu recuerdo</p></div><i class="fa-solid fa-arrow-right-long"></i></a>
+    <a class="lk" href="salon-fama.html"><i class="fa-solid fa-trophy lki"></i><div><h3>Salón de la fama</h3><p>Deportivo y cultural</p></div><i class="fa-solid fa-arrow-right-long"></i></a>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="info" id="ciencia">
+ <div class="rv">
+  <div class="eyebrow">Rincón de la Ciencia</div>
+  <h2 class="title">Ciencia, innovación y <b>proyectos</b></h2>
+  <p class="lead">Prototipos, robótica, software e investigaciones de nuestros estudiantes. Selecciona un proyecto para ver su información detallada.</p>
+ </div>
+ <div class="car rv">
+  <div class="ctrl"><button data-t="trkCi" data-d="-1" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button><button data-t="trkCi" data-d="1" aria-label="Siguiente"><i class="fa-solid fa-chevron-right"></i></button></div>
+  <div class="track" id="trkCi"></div>
+ </div>
+</section>
+
+<section class="cifras" id="cifras">
+ <div class="rv">
+  <div class="eyebrow">En números</div>
+  <h2 class="title">Un plantel que <b>sigue creciendo</b></h2>
+ </div>
+ <div class="cifras-grid">
+  <div class="cf rv"><div class="num" data-count="46">0</div><div class="lbl">Años de historia</div></div>
+  <div class="cf rv"><div class="num" data-count="6">0</div><div class="lbl">Generaciones documentadas</div></div>
+  <div class="cf rv"><div class="num" data-count="1100" data-suffix="+">0</div><div class="lbl">Estudiantes actuales</div></div>
+  <div class="cf rv"><div class="num" data-count="25" data-suffix="+">0</div><div class="lbl">Proyectos técnicos</div></div>
+ </div>
+</section>
+<footer></footer>
+
+<script src="comun.js"></script>
+<script>
+DATOS.then(D=>{
+const eras = D.hitos;
+
+ 
+
+ 
+
+class MuseoController {
+  constructor(eras) {
+    this.eras = eras;
+    this.currentEraIndex = eras.length - 1;
+    this.yearsEl = $('#years');
+    this.specsEl = $('#specs');
+    this.trackEl = $('#track');
+    this.init();
+  }
+ 
+  init() {
+    this.renderYears();
+    this.setEra(this.currentEraIndex);
+    this.attachTrackControls();
+  }
+ 
+
+  renderYears() {
+    this.yearsEl.innerHTML = '';
+    
+    this.eras.forEach((era, index) => {
+      const button = document.createElement('button');
+      button.textContent = era.y;
+      button.className = index === this.currentEraIndex ? 'on' : '';
+      button.setAttribute('aria-label', `Seleccionar año ${era.y}: ${era.t}`);
+      button.setAttribute('aria-pressed', index === this.currentEraIndex ? 'true' : 'false');
+      button.setAttribute('data-year', era.y);
+      button.setAttribute('data-index', index);
+      
+      button.addEventListener('click', () => this.setEra(index));
+      button.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          const nextIndex = (index + 1) % this.eras.length;
+          this.setEra(nextIndex);
+          $$('#years button')[nextIndex]?.focus();
+        } else if (e.key === 'ArrowLeft') {
+          const prevIndex = (index - 1 + this.eras.length) % this.eras.length;
+          this.setEra(prevIndex);
+          $$('#years button')[prevIndex]?.focus();
+        }
+      });
+      
+      this.yearsEl.appendChild(button);
+    });
+  }
+ 
+ 
+  setEra(index) {
+    if (index < 0 || index >= this.eras.length) return;
+    
+    this.currentEraIndex = index;
+    const era = this.eras[index];
+ 
+   
+    $$('#years button').forEach((btn, i) => {
+      const isActive = i === index;
+      btn.classList.toggle('on', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+ 
+    
+    $('#tlTitle').textContent = era.t;
+    $('#tlText').textContent = era.d;
+    
+    
+    const ofYear = $('#ofYear');
+    if (ofYear) ofYear.textContent = era.y;
+ 
+    
+    this.renderSpecialties(era);
+ 
+   
+    this.renderTeachers(era);
+ 
+    document.dispatchEvent(new CustomEvent('eraChanged', { detail: { era, index } }));
+  }
+
+  renderSpecialties(era) {
+    this.specsEl.innerHTML = era.s.map((specialty, i) => `
+      <div class="spec" role="article" aria-label="Especialidad: ${specialty[1]}">
+        <i class="fa-solid ${specialty[0]}" aria-hidden="true"></i>
+        <h3>${specialty[1]}</h3>
+        <p>Descripción de la especialidad.</p>
+      </div>
+    `).join('');
+  }
+ 
+
+  renderTeachers(era) {
+    this.trackEl.innerHTML = era.docentes.map((docente, k) => {
+      const slotId = `docente-${era.y}-${k + 1}`;
+      return `
+        <div class="card" role="article" aria-label="Docente ${k + 1} de ${era.y}">
+          <figure class="slot" data-slot="${slotId}">
+            
+            <i class="fa-regular fa-user" aria-hidden="true"></i>
+          </figure>
+          <h3>${docente.n}</h3>
+          <p>${docente.m} · Generación ${era.y}</p>
+        </div>
+      `;
+    }).join('');
+  }
+ 
+ 
+  attachTrackControls() {
+    const nextBtn = $('#next');
+    const prevBtn = $('#prev');
+    
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        this.trackEl.scrollBy({ left: 320, behavior: 'smooth' });
+      });
+      nextBtn.setAttribute('aria-label', 'Mostrar más docentes');
+    }
+    
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        this.trackEl.scrollBy({ left: -320, behavior: 'smooth' });
+      });
+      prevBtn.setAttribute('aria-label', 'Mostrar docentes anteriores');
+    }
+  }
+}
+ 
+
+function initToggleButtons() {
+  $$('.tgl').forEach(button => {
+    button.addEventListener('click', function() {
+      const container = this.closest('.ic');
+      const isOpen = container.classList.toggle('open');
+      this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    
+
+    const isOpen = button.closest('.ic')?.classList.contains('open');
+    button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+}
+ 
+function initApp() {
+  new MuseoController(eras);
+  initToggleButtons();
+}
+
+const ex=D.exalumnos;
+const ci=D.ciencia;
+function cards(el,arr,k,ic){
+ $(el).innerHTML=arr.map((o,i)=>`<div class="pcard" data-i="${i}" role="button" tabindex="0"><figure class="slot" data-slot="${k}-${i+1}"><i class="fa-regular fa-${ic}"></i></figure><span class="plus"><i class="fa-solid fa-plus"></i></span><div class="cap"><h3>${o.n}</h3><p>${o.r}</p></div></div>`).join('');
+ $(el).querySelectorAll('.pcard').forEach(b=>b.onclick=()=>openM({...arr[b.dataset.i],k:k+'-'+(+b.dataset.i+1)}));
+}
+cards('#trkEx',ex,'exalumno','user');
+cards('#trkCi',ci,'ciencia','lightbulb');
+document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>$('#'+b.dataset.t).scrollBy({left:b.dataset.d*320,behavior:'smooth'}));
+
+
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const prog=document.createElement('div');prog.id='prog';document.body.prepend(prog);
+
+const hitoImg=D.hitoImagenes;
+const hi=$('#hito-imagen');
+hi.onerror=()=>{hi.hidden=true};
+const archivoLead=$('#archivo .lead');
+const leadBase=archivoLead.textContent;
+
+
+document.addEventListener('eraChanged',e=>{
+ const era=e.detail.era;
+ const src=hitoImg[era.y];
+ if(src){hi.alt=era.t;hi.hidden=false;hi.src=src}else{hi.hidden=true}
+ $('#carreras-inline').innerHTML='<strong>Especialidades</strong>'+era.s.map(s=>`<span class="chip"><i class="fa-solid ${s[0]}" aria-hidden="true"></i>${s[1]}</span>`).join('');
+ archivoLead.textContent=leadBase+' · Época activa: '+era.y;
+});
+
+
+const heroImg=$('.hero .slot>img');
+let tick=false;
+addEventListener('scroll',()=>{
+ if(tick)return;tick=true;
+ requestAnimationFrame(()=>{
+  const max=document.documentElement.scrollHeight-innerHeight||1;
+  prog.style.width=(scrollY/max*100)+'%';
+  if(heroImg&&!reduce)heroImg.style.transform=`translateY(${Math.min(scrollY,innerHeight)*.25}px) scale(1.08)`;
+  tick=false;
+ });
+},{passive:true});
+
+document.querySelectorAll('.pcard').forEach(b=>b.addEventListener('keydown',e=>{
+ if(e.key==='Enter'||e.key===' '){e.preventDefault();b.click()}
+}));
+
+
+document.querySelectorAll('[data-count]').forEach(el=>{
+ const to=+el.dataset.count,suf=el.dataset.suffix||'';
+ if(reduce){el.textContent=to+suf;return}
+ const io2=new IntersectionObserver(([en])=>{
+  if(!en.isIntersecting)return;
+  io2.disconnect();
+  const t0=performance.now();
+  const step=t=>{
+   const k=Math.min((t-t0)/1600,1),v=Math.round(to*(1-Math.pow(1-k,3)));
+   el.textContent=v+suf;
+   if(k<1)requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+ },{threshold:.5});
+ io2.observe(el);
+});
+
+$('#evLista').innerHTML=D.eventos.map(e=>`<li><div class="d">${e.d}<small>${e.m}</small></div><div><h3>${e.n}</h3><p>${e.t}</p></div></li>`).join('');
+$('#pyLista').innerHTML=D.proyectos.map(p=>`<li><div class="d"><i class="fa-solid ${p.i}"></i></div><div><h3>${p.n}</h3><p>${p.t}</p></div></li>`).join('');
+
+initApp();
+});
+</script>
+</body>
+</html>
