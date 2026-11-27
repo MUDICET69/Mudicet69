@@ -18,7 +18,10 @@ const SVG={
  x:'<path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
  reset:'<path d="M4 12a8 8 0 1 0 2.6-5.9M4 4v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
  arrow:'<path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
- ext:'<path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+ ext:'<path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+ mic:'<path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zM6 11.5a6 6 0 0 0 12 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+ vol:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5zM15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+ volx:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5zM16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
 };
 const icono=(n,s)=>{const e=el('span','nix-i');e.innerHTML='<svg viewBox="0 0 24 24" width="'+(s||18)+'" height="'+(s||18)+'" aria-hidden="true" focusable="false">'+SVG[n]+'</svg>';return e};
 
@@ -26,7 +29,10 @@ let E={open:false,log:[],ctx:null};
 try{const g=JSON.parse(sessionStorage.getItem(KEY)||'null');if(g&&Array.isArray(g.log))E=Object.assign(E,g)}catch(e){}
 const guardar=()=>{try{E.log=E.log.slice(-40);sessionStorage.setItem(KEY,JSON.stringify(E))}catch(e){}};
 
-let INI='index.html',cerebro=null,IA=null,iaActiva=false,btn,tip,panel,log,input,navT=0,ocupado=false;
+let INI='index.html',cerebro=null,IA=null,iaActiva=false,btn,tip,panel,log,input,navT=0,ocupado=false,gen=0,mic=null,bV=null,rec=null,escuchando=false;
+const SR=w.SpeechRecognition||w.webkitSpeechRecognition;
+const TTS='speechSynthesis' in w&&'SpeechSynthesisUtterance' in w;
+const PLACEHOLDER='Pregunta sobre el museo…';
 
 const destino=u=>{
  if(!u)return '#';
@@ -114,11 +120,74 @@ function escribiendo(){
  return e;
 }
 
+/* ---------- voz: leer respuestas y dictar preguntas ---------- */
+const vozOn=()=>{try{return sessionStorage.getItem('nix_voz')==='1'}catch(e){return false}};
+function cancelarVoz(){if(TTS)try{speechSynthesis.cancel()}catch(e){}}
+function hablar(t){
+ if(!TTS||!vozOn())return;
+ cancelarVoz();
+ const limpio=String(t).replace(/\*\*/g,'').replace(/^•\s*/gm,'').replace(/\n+/g,'. ').slice(0,700);
+ if(!limpio)return;
+ const u=new SpeechSynthesisUtterance(limpio);
+ u.lang='es-MX';u.rate=1;
+ try{
+  const vs=speechSynthesis.getVoices()||[];
+  const v=vs.find(x=>/^es[-_]MX/i.test(x.lang))||vs.find(x=>/^es/i.test(x.lang));
+  if(v)u.voice=v;
+  speechSynthesis.speak(u);
+ }catch(e){}
+}
+function pintarVoz(){
+ if(!bV)return;
+ const on=vozOn();
+ bV.setAttribute('aria-pressed',String(on));
+ bV.setAttribute('aria-label',on?'Dejar de leer las respuestas en voz alta':'Leer las respuestas en voz alta');
+ bV.title=on?'Voz activada':'Leer en voz alta';
+ bV.textContent='';bV.appendChild(icono(on?'vol':'volx',20));
+}
+function alternarVoz(){
+ const on=!vozOn();
+ try{sessionStorage.setItem('nix_voz',on?'1':'0')}catch(e){}
+ pintarVoz();
+ if(on)hablar('Leeré mis respuestas en voz alta.');else cancelarVoz();
+}
+function dictar(){
+ if(!SR)return;
+ if(escuchando){try{rec.stop()}catch(e){}return}
+ if(ocupado)return;
+ cancelarVoz();
+ let avisado=false;try{avisado=sessionStorage.getItem('nix_vozaviso')==='1'}catch(e){}
+ if(!avisado){
+  try{sessionStorage.setItem('nix_vozaviso','1')}catch(e){}
+  agregar({r:'n',t:'Para dictar, tu navegador envía el audio a su propio servicio de voz. Si prefieres no usarlo, escribe tu pregunta.',cards:[],chips:[]});
+ }
+ let final='';
+ try{
+  rec=new SR();
+  rec.lang='es-MX';rec.interimResults=true;rec.continuous=false;rec.maxAlternatives=1;
+  rec.onstart=()=>{escuchando=true;mic.classList.add('on');mic.setAttribute('aria-pressed','true');input.placeholder='Te escucho…'};
+  rec.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++){t+=e.results[i][0].transcript;if(e.results[i].isFinal)final=t}input.value=t};
+  rec.onerror=e=>{
+   if(e.error==='not-allowed'||e.error==='service-not-allowed')agregar({r:'n',t:'No tengo permiso para usar el micrófono. Actívalo en el navegador o escribe tu pregunta.',cards:[],chips:[]});
+   else if(e.error==='network')agregar({r:'n',t:'No pude usar el dictado en este momento. Escribe tu pregunta, por favor.',cards:[],chips:[]});
+  };
+  rec.onend=()=>{
+   escuchando=false;mic.classList.remove('on');mic.setAttribute('aria-pressed','false');input.placeholder=PLACEHOLDER;
+   const v=(final||input.value).trim();
+   input.value='';
+   if(v)enviar(v);
+  };
+  rec.start();
+ }catch(e){escuchando=false;mic.classList.remove('on')}
+}
+
 async function enviar(txt){
  txt=String(txt||'').replace(/\s+/g,' ').trim().slice(0,200);
  if(!txt||ocupado)return;
  clearTimeout(navT);
+ cancelarVoz();
  ocupado=true;
+ const g=gen;
  agregar({r:'u',t:txt});
  const pt=escribiendo();
  let r;
@@ -130,8 +199,10 @@ async function enviar(txt){
  }
  if(!ia)await dormir(reduce?0:Math.min(900,260+r.t.length*3));
  pt.remove();
+ if(g!==gen)return;
  E.ctx=r.ctx||null;
  agregar({r:'n',t:ia||r.t,cards:r.cards||[],chips:r.chips||[],ia:!!ia});
+ hablar(ia||r.t);
  ocupado=false;
  if(r.ir)navT=setTimeout(()=>ir(r.ir.u),1100);
 }
@@ -160,6 +231,8 @@ function repintar(){
 }
 function reiniciar(){
  clearTimeout(navT);
+ cancelarVoz();
+ gen++;
  E.log=[];E.ctx=null;ocupado=false;
  log.textContent='';
  bienvenida();
@@ -185,6 +258,8 @@ function abrir(){
  setTimeout(()=>{(finoPuntero?input:panel).focus({preventScroll:true});log.scrollTop=log.scrollHeight},60);
 }
 function cerrar(devolver){
+ cancelarVoz();
+ if(escuchando)try{rec.stop()}catch(e){}
  E.open=false;
  panel.classList.remove('on');
  d.body.classList.remove('nix-abierto');
@@ -213,21 +288,31 @@ function montar(){
  const ht=el('div','nix-ht');ht.append(el('b',null,'NIX AI'),el('small',null,'El guardián del conocimiento de MUDICET69'));
  const bR=el('button','nix-ib');bR.type='button';bR.setAttribute('aria-label','Empezar una conversación nueva');bR.title='Conversación nueva';bR.appendChild(icono('reset'));
  const bX=el('button','nix-ib');bX.type='button';bX.setAttribute('aria-label','Cerrar NIX AI');bX.title='Cerrar';bX.appendChild(icono('x',20));
- h.append(av,ht,bR,bX);
+ if(TTS){bV=el('button','nix-ib');bV.type='button';bV.addEventListener('click',alternarVoz)}
+ h.append(av,ht,...(bV?[bV]:[]),bR,bX);
 
  log=el('div','nix-log');log.setAttribute('role','log');log.setAttribute('aria-live','polite');log.setAttribute('aria-label','Conversación con NIX');
 
  const f=el('div','nix-f');
  const form=el('form','nix-form');form.setAttribute('autocomplete','off');
- input=el('input','nix-in');input.type='text';input.maxLength=200;input.placeholder='Pregunta sobre el museo…';
+ input=el('input','nix-in');input.type='text';input.maxLength=200;input.placeholder=PLACEHOLDER;
  input.setAttribute('aria-label','Escribe tu pregunta');input.setAttribute('enterkeyhint','send');
  const env=el('button','nix-send');env.type='submit';env.setAttribute('aria-label','Enviar pregunta');env.appendChild(icono('send',20));
- form.append(input,env);
+ if(SR){
+  mic=el('button','nix-send nix-mic');mic.type='button';
+  mic.setAttribute('aria-label','Dictar tu pregunta con el micrófono');mic.setAttribute('aria-pressed','false');mic.title='Dictar pregunta';
+  mic.appendChild(icono('mic',20));
+  mic.addEventListener('click',dictar);
+ }
+ form.append(input,...(mic?[mic]:[]),env);
  f.append(form,el('p','nix-nota',iaActiva?'NIX usa IA para redactar con la información del museo. No escribas datos personales.':'NIX responde con la información publicada en el museo.'));
 
  panel.append(h,log,f);
  d.body.append(tip,btn,panel);
 
+ try{if(d.documentElement.classList.contains('kiosco')&&w.__nixLeerKiosco&&sessionStorage.getItem('nix_voz')===null)sessionStorage.setItem('nix_voz','1')}catch(e){}
+ pintarVoz();
+ addEventListener('pagehide',cancelarVoz);
  btn.addEventListener('click',()=>E.open?cerrar():abrir());
  tip.addEventListener('click',abrir);
  bX.addEventListener('click',()=>cerrar());
@@ -272,15 +357,18 @@ function montar(){
    if(E.open||E.log.length){
     clearTimeout(navT);
     if(E.open)cerrar(false);
-    E.log=[];E.ctx=null;log.textContent='';guardar();
+    cancelarVoz();gen++;ocupado=false;E.log=[];E.ctx=null;log.textContent='';guardar();
    }
   },1000);
  }
 }
 
-function cargarIA(D){
- const s=d.createElement('script');s.src='nix-ia.js';s.async=true;
+function cargarIA(D,i){
+ const nombres=['nix-ai.js','nix-ia.js'];
+ i=i||0;
+ const s=d.createElement('script');s.src=nombres[i];s.async=true;
  s.onload=()=>{if(w.NixIA&&w.NixIA.iniciar(D))IA=w.NixIA};
+ s.onerror=()=>{s.remove();if(i+1<nombres.length)cargarIA(D,i+1)};
  d.body.appendChild(s);
 }
 
@@ -288,6 +376,7 @@ const datos=w.DATOS||fetch('datos.json',{cache:'no-cache'}).then(r=>{if(!r.ok)th
 datos.then(D=>D,()=>null).then(D=>{
  if(D&&D.sitio&&D.sitio.inicio)INI=D.sitio.inicio;
  if(D&&D.ajustes&&D.ajustes.kiosco)w.__nixAjustes=D.ajustes.kiosco;
+ if(D&&D.ajustes&&D.ajustes.nixLeerEnKiosco===true)w.__nixLeerKiosco=true;
  if(D&&w.NixCerebro)cerebro=w.NixCerebro.crear(D,{});
  else cerebro={
   responder:()=>({t:'Ahora mismo no puedo leer la información del museo. Recarga la página en un momento e inténtalo de nuevo.',cards:[],chips:[],ctx:null}),
