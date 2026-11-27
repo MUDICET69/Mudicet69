@@ -26,7 +26,7 @@ let E={open:false,log:[],ctx:null};
 try{const g=JSON.parse(sessionStorage.getItem(KEY)||'null');if(g&&Array.isArray(g.log))E=Object.assign(E,g)}catch(e){}
 const guardar=()=>{try{E.log=E.log.slice(-40);sessionStorage.setItem(KEY,JSON.stringify(E))}catch(e){}};
 
-let INI='index.html',cerebro=null,btn,tip,panel,log,input,navT=0,ocupado=false;
+let INI='index.html',cerebro=null,IA=null,iaActiva=false,btn,tip,panel,log,input,navT=0,ocupado=false;
 
 const destino=u=>{
  if(!u)return '#';
@@ -83,6 +83,7 @@ function pintar(m){
  const cuerpo=el('div','nix-mb');
  texto(cuerpo,m.t);
  wrap.appendChild(cuerpo);
+ if(m.ia)wrap.appendChild(el('p','nix-ia','Respuesta redactada con IA a partir de la información del museo. Puede contener errores.'));
  if(m.cards&&m.cards.length){
   const cs=el('div','nix-cards');
   m.cards.forEach(c=>cs.appendChild(tarjeta(c)));
@@ -123,10 +124,14 @@ async function enviar(txt){
  let r;
  try{r=cerebro.responder(txt,E.ctx)}
  catch(e){r={t:'Tuve un problema al buscar eso. Prueba de nuevo con otras palabras.',cards:[],chips:[],ctx:E.ctx}}
- await dormir(reduce?0:Math.min(900,260+r.t.length*3));
+ let ia=null;
+ if(r.ia&&IA&&IA.disponible()){
+  try{ia=await IA.responder({pregunta:txt,docs:r.docs,historial:E.log.slice(0,-1)})}catch(e){ia=null}
+ }
+ if(!ia)await dormir(reduce?0:Math.min(900,260+r.t.length*3));
  pt.remove();
  E.ctx=r.ctx||null;
- agregar({r:'n',t:r.t,cards:r.cards||[],chips:r.chips||[]});
+ agregar({r:'n',t:ia||r.t,cards:r.cards||[],chips:r.chips||[],ia:!!ia});
  ocupado=false;
  if(r.ir)navT=setTimeout(()=>ir(r.ir.u),1100);
 }
@@ -200,10 +205,10 @@ function montar(){
  tip=el('div','nix-tip','Pregúntale a NIX');
  tip.setAttribute('aria-hidden','true');
 
- panel=el('section');panel.id='nix-panel';panel.tabIndex=-1;
+ panel=el('div');panel.id='nix-panel';panel.tabIndex=-1;
  panel.setAttribute('role','dialog');panel.setAttribute('aria-label','NIX AI, asistente del museo');
 
- const h=el('header','nix-h');
+ const h=el('div','nix-h');
  const av=el('span','nix-av');const im2=el('img');im2.src='nix-avatar-sm.png';im2.alt='';av.appendChild(im2);
  const ht=el('div','nix-ht');ht.append(el('b',null,'NIX AI'),el('small',null,'El guardián del conocimiento de MUDICET69'));
  const bR=el('button','nix-ib');bR.type='button';bR.setAttribute('aria-label','Empezar una conversación nueva');bR.title='Conversación nueva';bR.appendChild(icono('reset'));
@@ -218,7 +223,7 @@ function montar(){
  input.setAttribute('aria-label','Escribe tu pregunta');input.setAttribute('enterkeyhint','send');
  const env=el('button','nix-send');env.type='submit';env.setAttribute('aria-label','Enviar pregunta');env.appendChild(icono('send',20));
  form.append(input,env);
- f.append(form,el('p','nix-nota','NIX responde con la información publicada en el museo.'));
+ f.append(form,el('p','nix-nota',iaActiva?'NIX usa IA para redactar con la información del museo. No escribas datos personales.':'NIX responde con la información publicada en el museo.'));
 
  panel.append(h,log,f);
  d.body.append(tip,btn,panel);
@@ -273,6 +278,12 @@ function montar(){
  }
 }
 
+function cargarIA(D){
+ const s=d.createElement('script');s.src='nix-ia.js';s.async=true;
+ s.onload=()=>{if(w.NixIA&&w.NixIA.iniciar(D))IA=w.NixIA};
+ d.body.appendChild(s);
+}
+
 const datos=w.DATOS||fetch('datos.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
 datos.then(D=>D,()=>null).then(D=>{
  if(D&&D.sitio&&D.sitio.inicio)INI=D.sitio.inicio;
@@ -282,6 +293,9 @@ datos.then(D=>D,()=>null).then(D=>{
   responder:()=>({t:'Ahora mismo no puedo leer la información del museo. Recarga la página en un momento e inténtalo de nuevo.',cards:[],chips:[],ctx:null}),
   bienvenida:()=>({t:'Soy **NIX**. Ahora mismo no puedo leer la información del museo; recarga la página en un momento.',chips:[]})
  };
+ const cfgIA=D&&D.ajustes&&D.ajustes.nix&&D.ajustes.nix.ia;
+ iaActiva=!!(cfgIA&&cfgIA.activa===true&&cfgIA.siteKey&&w.NixCerebro&&D);
  montar();
+ if(iaActiva)cargarIA(D);
 });
 })();
