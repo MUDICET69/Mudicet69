@@ -18,6 +18,12 @@ w.toast=t=>{
  tEl.textContent=t;tEl.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>tEl.classList.remove('on'),2400);
 };
 
+if(w.emailjs)w.emailjs.init({publicKey:'m81axakcxsf80Ad10'});
+w.avisarAdmin=(tipo,detalle)=>{
+ if(!w.emailjs)return;
+ w.emailjs.send('service_h5gdy08','template_8fur77f',{tipo,detalle}).catch(e=>console.warn('[email]',e));
+};
+
 w.DATOS.catch(()=>w.toast('No se pudieron cargar los datos del sitio. Ábrelo desde un servidor, no con doble clic en el archivo.'));
 
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:+cuerpo.dataset.umbral||.1});
