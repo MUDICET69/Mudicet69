@@ -43,6 +43,7 @@
 <header class="phead"><div class="rv"><div class="eyebrow">Comunidad</div><h1 class="title">Libro de <b>visitas</b></h1><p>Cuéntanos qué te pareció el recorrido, comparte una felicitación o un recuerdo con la comunidad del CETIS 69.</p></div></header>
 <section><div class="lb"><form id="f" class="fm"><label>Nombre<input id="nm" required maxlength="60" autocomplete="name"></label><label>Eres<select id="rl"><option>Exalumno</option><option>Alumno</option><option>Docente</option><option>Visitante</option></select></label><label>Mensaje<textarea id="ms" required maxlength="400" rows="5"></textarea></label><button class="btn" type="submit">Enviar <i class="fa-solid fa-paper-plane"></i></button></form><div><div class="eyebrow">Mensajes <span id="ct"></span></div><div id="ls" aria-live="polite"></div></div></div></section>
 <footer></footer>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="comun.js"></script>
 <script src="firebase-museo.js"></script>
 <script>
@@ -193,6 +194,7 @@ f.addEventListener('submit',async e=>{
   const ahora=Date.now();
   mios.unshift({id:ref.id,n:o.n,r:o.r,m:o.m,f:fechaCorta(new Date(ahora)),t:ahora});
   guardar();
+  avisarAdmin('Libro de visitas','Nombre: '+o.n+'\nRol: '+o.r+'\nMensaje: '+o.m);
   try{localStorage.setItem(KT,String(ahora))}catch(_){}
   f.reset();cuenta();
   filtro='Todos';tope=10;
