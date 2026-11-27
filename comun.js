@@ -18,6 +18,28 @@ w.toast=t=>{
  tEl.textContent=t;tEl.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>tEl.classList.remove('on'),2400);
 };
 
+const estiloExtra=d.createElement('style');
+estiloExtra.textContent=`
+.psp{position:fixed;left:1rem;bottom:1rem;z-index:90;font-family:inherit}
+.psp-btn{display:flex;align-items:center;gap:.5rem;padding:.65rem 1rem;background:var(--guinda);color:#fff;border:none;font-size:.7rem;letter-spacing:.08em;font-weight:600;box-shadow:0 10px 30px -14px rgba(0,0,0,.5);cursor:pointer}
+.psp-btn:hover{background:var(--guinda-d)}
+.psp-pop{position:absolute;left:0;bottom:calc(100% + .6rem);width:min(280px,80vw);background:#fff;border:1px solid var(--linea);box-shadow:0 20px 50px -20px rgba(0,0,0,.4);padding:1rem 1.1rem;opacity:0;pointer-events:none;transform:translateY(8px);transition:.25s}
+.psp.open .psp-pop{opacity:1;pointer-events:auto;transform:translateY(0)}
+.psp-tit{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gris);margin-bottom:.7rem;font-weight:600}
+.psp ul{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;max-height:50vh;overflow-y:auto}
+.psp-item{display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:var(--gris);opacity:.55;transition:.3s}
+.psp-item i:first-child{width:16px;text-align:center;color:var(--guinda)}
+.psp-ok{margin-left:auto;opacity:0;color:var(--guinda)}
+.psp-item.on{opacity:1;color:inherit}
+.psp-item.on .psp-ok{opacity:1}
+.instalar{position:fixed;right:1rem;bottom:1rem;z-index:90;display:flex;align-items:center;gap:.5rem;padding:.65rem 1.1rem;background:var(--negro,#1a1a1a);color:#fff;border:none;font-size:.7rem;letter-spacing:.08em;font-weight:600;box-shadow:0 10px 30px -14px rgba(0,0,0,.5);cursor:pointer}
+.instalar:hover{opacity:.9}
+.instalar:disabled{opacity:.6;cursor:wait}
+.kiosco .instalar{display:none!important}
+@media (max-width:560px){.psp{left:.6rem;bottom:.6rem}.instalar{right:.6rem;bottom:.6rem}}
+`;
+d.head.appendChild(estiloExtra);
+
 if(w.emailjs)w.emailjs.init({publicKey:'m81axakcxsf80Ad10'});
 w.avisarAdmin=(tipo,detalle)=>{
  if(!w.emailjs)return;
@@ -192,6 +214,98 @@ function armarBuscador(D){
  if(boton)boton.addEventListener('click',abrir);
 }
 
+const KP='cetis69_pasaporte';
+const PARADAS=[
+ {clave:'historia',etiqueta:'Historia',icono:'fa-landmark',pag:'index.html',sel:'#historia'},
+ {clave:'linea',etiqueta:'Línea del tiempo',icono:'fa-clock-rotate-left',pag:'index.html',sel:'#linea'},
+ {clave:'oferta',etiqueta:'Oferta educativa',icono:'fa-graduation-cap',pag:'index.html',sel:'#oferta'},
+ {clave:'docentes',etiqueta:'Docentes',icono:'fa-chalkboard-user',pag:'index.html',sel:'#docentes'},
+ {clave:'archivo-visual',etiqueta:'Archivo visual',icono:'fa-images',pag:'index.html',sel:'#archivo'},
+ {clave:'exalumnos',etiqueta:'Exalumnos',icono:'fa-user-graduate',pag:'index.html',sel:'#exalumnos'},
+ {clave:'ciencia',etiqueta:'Ciencia',icono:'fa-lightbulb',pag:'index.html',sel:'#ciencia'},
+ {clave:'salon-fama',etiqueta:'Salón de la fama',icono:'fa-trophy',pag:'salon-fama.html'},
+ {clave:'mapa-360',etiqueta:'Mapa 360°',icono:'fa-compass',pag:'mapa-360.html'},
+ {clave:'archivo-foto',etiqueta:'Archivo fotográfico',icono:'fa-camera-retro',pag:'archivo-fotografico.html'},
+ {clave:'museo-3d',etiqueta:'Recorrido 3D',icono:'fa-cube',pag:'museo-3d.html'},
+ {clave:'libro',etiqueta:'Libro de visitas',icono:'fa-feather',pag:'libro-visitas.html'}
+];
+let sellos=[],cajaPasaporte=null;
+try{sellos=JSON.parse(localStorage.getItem(KP))||[]}catch(e){}
+const guardarPasaporte=()=>{try{localStorage.setItem(KP,JSON.stringify(sellos))}catch(e){}};
+
+function pintarPasaporte(){
+ if(!cajaPasaporte)return;
+ cajaPasaporte.querySelector('.psp-cont').textContent=sellos.length+' / '+PARADAS.length;
+ cajaPasaporte.querySelectorAll('.psp-item').forEach(li=>li.classList.toggle('on',sellos.includes(li.dataset.clave)));
+}
+
+function sellar(clave){
+ if(sellos.includes(clave))return;
+ sellos.push(clave);guardarPasaporte();
+ const p=PARADAS.find(x=>x.clave===clave);
+ if(p)w.toast('Sello obtenido: '+p.etiqueta);
+ pintarPasaporte();
+ if(sellos.length===PARADAS.length)setTimeout(()=>w.toast('¡Pasaporte completo! Recorriste todo el museo.'),2500);
+}
+
+function crearPasaporte(){
+ if(archivoActual==='moderar.html'||$('.psp'))return null;
+ const box=d.createElement('div');box.className='psp';
+ box.innerHTML='<button type="button" class="psp-btn" aria-expanded="false" aria-label="Pasaporte del museo"><i class="fa-solid fa-stamp" aria-hidden="true"></i><span class="psp-cont"></span></button>'+
+  '<div class="psp-pop" role="group" aria-label="Sellos del pasaporte"><p class="psp-tit">Tu pasaporte del museo</p><ul>'+
+  PARADAS.map(p=>'<li class="psp-item" data-clave="'+p.clave+'"><i class="fa-solid '+p.icono+'" aria-hidden="true"></i><span>'+esc(p.etiqueta)+'</span><i class="fa-solid fa-check psp-ok" aria-hidden="true"></i></li>').join('')+
+  '</ul></div>';
+ d.body.appendChild(box);
+ const btn=box.querySelector('.psp-btn');
+ btn.addEventListener('click',()=>btn.setAttribute('aria-expanded',String(box.classList.toggle('open'))));
+ d.addEventListener('click',e=>{if(box.classList.contains('open')&&!box.contains(e.target))box.classList.remove('open')});
+ return box;
+}
+
+function iniciarPasaporte(){
+ cajaPasaporte=crearPasaporte();
+ if(!cajaPasaporte)return;
+ pintarPasaporte();
+ const directa=PARADAS.find(p=>p.pag===archivoActual&&!p.sel);
+ if(directa)sellar(directa.clave);
+ if(esInicio)PARADAS.filter(p=>p.pag==='index.html'&&p.sel).forEach(p=>{
+  const el=$(p.sel);
+  if(!el)return;
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){sellar(p.clave);obs.disconnect()}}),{threshold:.4});
+  obs.observe(el);
+ });
+}
+
+let promptInstalar=null,botonInstalar=null;
+function crearBotonInstalar(){
+ if(botonInstalar||archivoActual==='moderar.html'||d.documentElement.classList.contains('kiosco'))return null;
+ if(matchMedia('(display-mode: standalone)').matches||navigator.standalone===true)return null;
+ const b=d.createElement('button');
+ b.type='button';b.className='instalar';b.hidden=true;
+ b.innerHTML='<i class="fa-solid fa-circle-down" aria-hidden="true"></i> Instalar app';
+ b.addEventListener('click',async()=>{
+  if(!promptInstalar)return;
+  b.disabled=true;
+  promptInstalar.prompt();
+  try{await promptInstalar.userChoice}catch(e){}
+  promptInstalar=null;b.hidden=true;b.disabled=false;
+ });
+ d.body.appendChild(b);
+ return b;
+}
+addEventListener('beforeinstallprompt',e=>{
+ e.preventDefault();
+ if(d.documentElement.classList.contains('kiosco'))return;
+ promptInstalar=e;
+ if(!botonInstalar)botonInstalar=crearBotonInstalar();
+ if(botonInstalar)botonInstalar.hidden=false;
+});
+addEventListener('appinstalled',()=>{
+ promptInstalar=null;
+ if(botonInstalar)botonInstalar.hidden=true;
+ w.toast('Museo instalado. Ya puedes abrirlo como app.');
+});
+
 function armarKiosco(D){
  const K='c69_kiosco',par=new URLSearchParams(location.search).get('kiosco');
  let activo=false;
@@ -213,6 +327,7 @@ function armarKiosco(D){
   if(modal.classList.contains('on')){modal.classList.remove('on');previo=null}
   const bq=$('.bq.on');if(bq)bq.classList.remove('on');
   if(d.fullscreenElement&&d.exitFullscreen)d.exitFullscreen().catch(()=>{});
+  if(sellos.length){sellos=[];try{localStorage.removeItem(KP)}catch(e){}pintarPasaporte()}
   if(!esInicio){location.href=inicio;return}
   if(scrollY>0)scrollTo({top:0,behavior:'smooth'});
  },1000);
@@ -225,6 +340,8 @@ w.DATOS.then(D=>{
  armarBuscador(D);
 }).catch(()=>{});
 w.DATOS.catch(()=>({})).then(armarKiosco);
+
+w.alCargar(iniciarPasaporte);
 
 w.alCargar(()=>{
  if(cuerpo.dataset.nix==='off'||w.__nixUI)return;
