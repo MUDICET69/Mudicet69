@@ -157,22 +157,30 @@ function crear(D,opc){
   return out.sort((a,b)=>b.s-a.s);
  };
 
- const SUG_BASE=['¿Qué es el museo?','Línea del tiempo','Especialidades','Salón de la fama','Contacto','Sorpréndeme'];
+ const SUG_BASE=['¿Qué es el museo?','Recorrido guiado','Ponme a prueba','Línea del tiempo','Especialidades','Salón de la fama','Contacto','Sorpréndeme'];
  const SUG_PAG={
-  'index.html':['Línea del tiempo','Especialidades','Exalumnos','Contacto'],
-  '':['Línea del tiempo','Especialidades','Exalumnos','Contacto'],
-  'salon-fama.html':['¿Qué reconocimientos hay?','Reconocimientos deportivos','Reconocimientos culturales'],
-  'libro-visitas.html':['¿Cómo dejo un mensaje?','Contacto','Sorpréndeme'],
-  'archivo-fotografico.html':['¿Cómo envío mi foto?','Fotos de los 90s','Fotos de los 2000s'],
-  'museo-3d.html':['¿Cómo funciona el recorrido?','Mapa 360°','Línea del tiempo'],
-  'mapa-360.html':['¿Qué zonas tiene el plantel?','Talleres','Recorrido 3D'],
-  'creditos.html':['¿Quién hizo el museo?','Línea del tiempo','Contacto']
+  'index.html':['Recorrido guiado','Ponme a prueba','Línea del tiempo','Especialidades'],
+  '':['Recorrido guiado','Ponme a prueba','Línea del tiempo','Especialidades'],
+  'salon-fama.html':['¿Qué reconocimientos hay?','Reconocimientos deportivos','Recorrido guiado','Ponme a prueba'],
+  'libro-visitas.html':['¿Cómo dejo un mensaje?','Recorrido guiado','Ponme a prueba','Contacto'],
+  'archivo-fotografico.html':['¿Cómo envío mi foto?','Fotos de los 90s','Recorrido guiado','Ponme a prueba'],
+  'museo-3d.html':['¿Cómo funciona el recorrido?','Recorrido guiado','Ponme a prueba','Mapa 360°'],
+  'mapa-360.html':['¿Qué zonas tiene el plantel?','Recorrido por el plantel','Ponme a prueba','Talleres'],
+  'creditos.html':['¿Quién hizo el museo?','Recorrido guiado','Ponme a prueba','Contacto']
  };
  const sugerencias=pagina=>(SUG_PAG[(pagina||'').toLowerCase()]||SUG_BASE).slice();
  const card=(d,conTexto)=>({k:d.k,t:d.t,x:conTexto===false?'':(d.ph?'Los detalles de este espacio están en preparación.':corta(d.x,150)),u:d.u});
  const cardUrl=(k,t,u,x)=>({k,t,u,x:x||''});
  const R=(t,o)=>Object.assign({t,cards:[],chips:[]},o||{});
  const reales=l=>l.filter(d=>!d.ph);
+ const faqDirecta=txt=>{
+  const f=docs.filter(d=>d.k==='Preguntas'&&!d.ph);
+  if(!f.length)return null;
+  const nuc=corregir(toks(txt)).ts.filter(t=>!GEN.has(t));
+  if(!nuc.some(t=>t!=='historia'&&!KIND[t]))return null;
+  const hit=d=>nuc.filter(t=>d.tt.has(t)).length;
+  return f.filter(d=>nuc.every(t=>d.tt.has(t)||d.tx.has(t)||d.tk.has(t))).sort((a,b)=>hit(b)-hit(a))[0]||null;
+ };
 
  function bienvenida(pagina){
   const p=(pagina||'').toLowerCase();
@@ -293,6 +301,97 @@ function crear(D,opc){
  };
  (D.zonas||[]).forEach(z=>DESTINOS.push({t:z.n+' (mapa 360°)',u:'mapa-360.html?zona='+z.id,k:new Set(toks(z.n+' '+(z.etiquetas||[]).join(' ')))}));
 
+ /* ---------- recorridos guiados ---------- */
+ const PEND_ETAPA='El texto de esta etapa todavía se está completando.';
+ function construirTour(id){
+  const pasos=[];
+  const cierre={t:'Y ahora, a explorar',x:'Con esto cerramos el recorrido. Puedes ver los recuerdos del archivo fotográfico o caminar el museo en 3D.',cards:[cardUrl('Ir a','Archivo fotográfico','archivo-fotografico.html'),cardUrl('Ir a','Recorrido virtual 3D','Museo-3D.html')]};
+  if(id==='historia'){
+   if(!hitos.length)return null;
+   hitos.forEach(h=>{
+    const es=(h.s||[]).map(x=>x[1]);
+    const x=[(h.d&&!PH.test(h.d))?h.d:PEND_ETAPA];
+    if(es.length)x.push('Especialidades de esa etapa: '+listaCon(es)+'.');
+    pasos.push({t:h.y+' · '+h.t,x:x.join('\n'),cards:[cardUrl('Línea del tiempo',h.y+' · '+h.t,ini+'#linea')]});
+   });
+   pasos.push(cierre);
+  }else if(id==='plantel'){
+   const zs=D.zonas||[];
+   if(!zs.length)return null;
+   zs.forEach(z=>{
+    const etq=(z.etiquetas||[]).filter(Boolean);
+    const dd=PH.test(z.d||'')?'':(z.d||'');
+    pasos.push({t:z.n,x:[etq.length?'Aquí encuentras: '+listaCon(etq)+'.':'',dd].filter(Boolean).join('\n')||'Esta zona del plantel ya está marcada en el mapa.',cards:[cardUrl('Mapa 360°',z.n,'mapa-360.html?zona='+z.id)]});
+   });
+   pasos.push(cierre);
+  }else if(id==='museo'){
+   const pg=(S.paginas||[]).filter(p=>!/qr-zonas/.test(p.u));
+   if(!pg.length)return null;
+   pg.forEach(p=>pasos.push({t:p.t,x:p.u===ini&&PIE.descripcion?PIE.descripcion:(p.x||''),cards:[cardUrl('Ir a',p.t,p.u)]}));
+  }
+  return pasos.length?pasos:null;
+ }
+ function pasoTour(id,i,ctx){
+  const P=construirTour(id);
+  if(!P)return null;
+  i=Math.max(0,Math.min(i,P.length-1));
+  const p=P[i],ultimo=i===P.length-1;
+  const chips=ultimo?['Anterior','Terminar recorrido','Ponme a prueba']:(i>0?['Siguiente','Anterior','Terminar recorrido']:['Siguiente','Terminar recorrido']);
+  return R('**Paso '+(i+1)+' de '+P.length+' · '+p.t+'**\n'+p.x,{cards:p.cards||[],chips,sinIA:true,ctx:Object.assign({},ctx,{tour:{id,i},ult:null})});
+ }
+ const finTour=ctx=>R('Terminamos el recorrido. Cuando quieras, empezamos otro o te pongo a prueba con unas preguntas.',{chips:['Ponme a prueba','Recorrido por el museo','Sorpréndeme'],sinIA:true,ctx:Object.assign({},ctx,{tour:null,ult:null})});
+
+ /* ---------- quiz ---------- */
+ const mezcla=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+ function generarQuiz(){
+  const mk=(q,ok,otros,e)=>{
+   const d=mezcla([...new Set(otros.map(String).filter(x=>x&&x!==String(ok)))]).slice(0,3);
+   return d.length<3?null:{q,ok:String(ok),o:mezcla([String(ok),...d]),e};
+  };
+  const tipos={};
+  const add=(t,p)=>{if(p)(tipos[t]=tipos[t]||[]).push(p)};
+  const todasEsp=[...esp.keys()];
+  hitos.forEach(h=>{
+   const en=(h.s||[]).map(x=>x[1]);
+   en.forEach(n=>add('esp',mk('¿Cuál de estas especialidades aparece en la etapa '+h.y+'?',n,todasEsp.filter(x=>!en.includes(x)),'En la línea del tiempo, '+n+' aparece en la etapa '+h.y+'.')));
+  });
+  esp.forEach((ys,n)=>{if(ys.length===1)add('etapa',mk('¿En qué etapa de la línea del tiempo aparece «'+n+'»?',ys[0],hitos.map(h=>h.y),n+' aparece solo en la etapa '+ys[0]+'.'))});
+  const zs=D.zonas||[];
+  zs.forEach(z=>(z.etiquetas||[]).forEach(e=>add('zona',mk('¿Qué zona del plantel incluye «'+e+'»?',z.n,zs.map(x=>x.n),'«'+e+'» está en la zona '+z.n+' del mapa 360°.'))));
+  const conteo={};(D.archivo||[]).forEach(a=>{conteo[a.c]=(conteo[a.c]||0)+1});
+  (D.archivo||[]).forEach(a=>{if(conteo[a.c]===1){const dec=(+(a.d+'0'))+'s';add('arch',mk('¿De qué década es el recuerdo «'+a.c+'» del archivo fotográfico?',dec,(D.archivo||[]).map(x=>(+(x.d+'0'))+'s'),'«'+a.c+'» está en el archivo de los '+dec+'.'))}});
+  const menu=(S.menu||[]).map(m=>m.t);
+  const sitio=[['¿En qué página puedes dejar un mensaje para la comunidad?','Libro de visitas'],['¿Dónde puedes caminar el museo en primera persona?','Recorrido 3D'],['¿Dónde ves trofeos, medallas y reconocimientos?','Salón de la fama'],['¿Dónde están los recuerdos en fotos y videos?','Archivo fotográfico']];
+  sitio.forEach(([q,ok])=>{if(menu.includes(ok))add('sitio',mk(q,ok,menu,'Lo encuentras en «'+ok+'», en el menú del museo.'))});
+  if(hitos.length>=3)add('num',mk('¿Cuántas etapas tiene la línea del tiempo del museo?',hitos.length,[hitos.length-1,hitos.length+1,hitos.length+2,hitos.length-2],'La línea del tiempo tiene '+hitos.length+' etapas, de '+hitos[0].y+' a '+hitos[hitos.length-1].y+'.'));
+  const llaves=mezcla(Object.keys(tipos));
+  const out=[];
+  llaves.forEach(k=>{if(out.length<5)out.push(pick(tipos[k]))});
+  let r=0;
+  while(out.length<5&&r<20){
+   r++;
+   const k=pick(llaves.length?llaves:['x']);
+   const p=tipos[k]&&pick(tipos[k]);
+   if(p&&!out.some(x=>x.q===p.q))out.push(p);
+   if(r>12&&!tipos[k])break;
+  }
+  return out.length>=3?mezcla(out).slice(0,5):null;
+ }
+ function preguntaQuiz(Q,ctx,previo){
+  const p=Q.p[Q.i];
+  return R((previo?previo+'\n':'')+'**Pregunta '+(Q.i+1)+' de '+Q.p.length+'**\n'+p.q,{chips:p.o,sinIA:true,ctx:Object.assign({},ctx,{quiz:Q,ult:null})});
+ }
+ function respuestaQuiz(Q,txt,ctx){
+  const p=Q.p[Q.i];
+  const bien=norm(txt)===norm(p.ok);
+  const s=Q.s+(bien?1:0);
+  const fb=(bien?pick(['¡Correcto!','¡Así es!','¡Exacto!']):'Casi. La respuesta era **'+p.ok+'**.')+' '+p.e;
+  if(Q.i+1<Q.p.length)return preguntaQuiz({p:Q.p,i:Q.i+1,s},ctx,fb);
+  const n=Q.p.length;
+  const cierre=s===n?'¡Perfecto! Conoces muy bien el museo.':s>=Math.ceil(n/2)?'Muy bien, ya conoces buena parte del museo.':'Buen intento. Un recorrido guiado te ayuda a repasar.';
+  return R(fb+'\n**Resultado: '+s+' de '+n+'.** '+cierre,{chips:['Otro quiz','Recorrido por la historia','Sorpréndeme'],sinIA:true,ctx:Object.assign({},ctx,{quiz:null,ult:null})});
+ }
+
  function responder(texto,ctx){
   ctx=ctx||{};
   const crudo=String(texto||'').trim().slice(0,200);
@@ -300,6 +399,35 @@ function crear(D,opc){
   if(!q)return R('Escribe tu pregunta y la busco en el museo.',{chips:SUG_BASE.slice(0,4),ctx});
   const palabras=q.split(' ');
   const corto=palabras.length<=4;
+
+  /* quiz y recorrido en curso */
+  if(ctx.quiz&&ctx.quiz.p&&ctx.quiz.p[ctx.quiz.i]){
+   const Q=ctx.quiz,op=Q.p[Q.i].o.map(norm);
+   if(/^(salir|terminar|cancelar|basta|ya no|detener)( quiz)?$/.test(q))return R('Dejamos el quiz. Cuando quieras, lo retomamos con uno nuevo.',{chips:['Otro quiz','Recorrido por la historia','Sorpréndeme'],sinIA:true,ctx:Object.assign({},ctx,{quiz:null})});
+   if(op.includes(q))return respuestaQuiz(Q,crudo,ctx);
+   if(/^(seguir|continuar|retomar|reanudar)( el)?( quiz)?$/.test(q))return preguntaQuiz(Q,ctx);
+  }
+  if(ctx.tour&&ctx.tour.id){
+   const T=ctx.tour;
+   if(/^(siguiente|sigue|continua|adelante|next|listo|vamos|si|ok|dale)$/.test(q)||/^(seguir|continuar|retomar|reanudar)( el)? recorrido$/.test(q)){
+    const hay=construirTour(T.id);
+    if(!hay)return finTour(ctx);
+    const i=/^(seguir|continuar|retomar|reanudar)/.test(q)?T.i:T.i+1;
+    return i>=hay.length?finTour(ctx):pasoTour(T.id,i,ctx);
+   }
+   if(/^(anterior|atras|regresa|volver|previo)$/.test(q))return pasoTour(T.id,Math.max(0,T.i-1),ctx)||finTour(ctx);
+   if(/^(terminar|termina|salir|fin|cancelar|detener|basta)( recorrido)?$|^salir del recorrido$/.test(q))return finTour(ctx);
+  }
+  if(/\b(quiz|trivia|ponme a prueba|cuestionario|preguntame|examen)\b|\bjuguemos\b/.test(q)){
+   const p=generarQuiz();
+   if(!p)return R('Todavía no tengo suficientes datos del museo para armar un quiz. Cuando se llenen más secciones, lo intentamos.',{chips:['Recorrido por el museo','Sorpréndeme'],sinIA:true,ctx:Object.assign({},ctx,{quiz:null})});
+   return preguntaQuiz({p,i:0,s:0},ctx,'Vamos con '+p.length+' preguntas sobre el museo. Toca la respuesta que creas correcta.');
+  }
+  if((/\b(guiad\w*|guiame|tour|visita guiada|recorre conmigo|paseo)\b|\brecorrido por\b/.test(q))&&!/\b3d\b/.test(q)){
+   const id=/histor|linea|etapa|epoca/.test(q)?'historia':/plantel|zona|escuela|instalacion|mapa|cancha|taller/.test(q)?'plantel':/museo|todo|general|seccion/.test(q)?'museo':null;
+   if(id){const r=pasoTour(id,0,ctx);if(r)return r}
+   return R('Con gusto te guío paso a paso. ¿Qué recorrido prefieres?',{chips:['Recorrido por la historia','Recorrido por el plantel','Recorrido por el museo'],sinIA:true,ctx});
+  }
 
   if(/^(mas|ver mas|otro|otra|otros|otras|siguiente|sigue|continua|y que mas|dame mas)$/.test(q)){
    if(q==='otro'||q==='otra'){if(ctx.rand)return aleatorio(ctx)}
@@ -321,7 +449,10 @@ function crear(D,opc){
   if(/\b(quien eres|que eres|como te llamas|tu nombre|quien es nix|que es nix|que significa nix|eres (una )?(ia|robot|bot|persona|humano|real)|quien te (creo|hizo|programo))\b/.test(q))
    return R('Soy **NIX AI**, el guardián del conocimiento de MUDICET69, el Museo Digital del CETIS 69. Soy un asistente virtual, no una persona: por ahora respondo buscando directamente en la información publicada en este museo y, si algo todavía no está, te lo digo en lugar de inventarlo.',{chips:['¿Qué puedes hacer?','¿Qué es el museo?','Sorpréndeme'],ctx});
   if(/\b(que (puedes|sabes|haces)|como funcionas|para que sirves|ayuda|ayudame|opciones)\b/.test(q))
-   return R('Puedo:\n• Contarte la historia y las etapas del plantel.\n• Decirte qué especialidades hubo y qué había en un año o década.\n• Buscar personas, eventos, proyectos, reconocimientos y fotos.\n• Llevarte a cualquier sección ("llévame al Salón de la fama").\n• Explicarte cómo dejar un mensaje o compartir un recuerdo.',{chips:['Línea del tiempo','¿Qué había en los 90s?','Sorpréndeme'],ctx});
+   return R('Puedo:\n• Contarte la historia y las etapas del plantel.\n• Decirte qué especialidades hubo y qué había en un año o década.\n• Buscar personas, eventos, proyectos, reconocimientos y fotos.\n• Llevarte a cualquier sección ("llévame al Salón de la fama").\n• Explicarte cómo dejar un mensaje o compartir un recuerdo.\n• Guiarte paso a paso ("recorrido guiado") o ponerte a prueba con un quiz.',{chips:['Recorrido guiado','Ponme a prueba','¿Qué había en los 90s?'],ctx});
+  // Preguntas frecuentes (datos.json → "preguntas"): si la pregunta cae por completo en una de ellas, esa respuesta manda.
+  const faqM=faqDirecta(crudo);
+  if(faqM)return R('**'+faqM.t+'**\n'+faqM.x,{chips:['Línea del tiempo','Sorpréndeme'],ctx:Object.assign({},ctx,{ult:null})});
   if(/\b(contacto|contactar|telefono|llamar|numero de|correo|email|mail|direccion|horario|redes|facebook|instagram|tiktok)\b/.test(q)||/\b(donde (esta|queda|se ubica)|ubicacion|como llegar)\b.*\b(cetis|escuela|plantel|museo)\b/.test(q)){
    if(/\bhorario\b/.test(q)&&!/\b(telefono|correo|contacto)\b/.test(q))return R('El museo no publica horarios de atención. Si necesitas confirmarlos, puedes usar los datos de contacto del plantel.',{chips:['Contacto'],ctx});
    return contacto(ctx);
@@ -367,16 +498,6 @@ function crear(D,opc){
   const corr=corregir(ts0);
   const ts=corr.ts;
   const nota=corr.cambios.length?'Entendí «'+corr.cambios.map(c=>c[1]).join(', ')+'».\n':'';
-  // Preguntas frecuentes (datos.json → "preguntas"): si la pregunta cae por completo en una de ellas, se responde directo.
-  const faq=docs.filter(d=>d.k==='Preguntas'&&!d.ph);
-  if(faq.length){
-   const nuc=ts.filter(t=>!GEN.has(t));
-   if(nuc.some(t=>t!=='historia'&&!KIND[t])){
-    const hit=d=>nuc.filter(t=>d.tt.has(t)).length;
-    const m=faq.filter(d=>nuc.every(t=>d.tt.has(t)||d.tx.has(t)||d.tk.has(t))).sort((a,b)=>hit(b)-hit(a))[0];
-    if(m)return R(nota+'**'+m.t+'**\n'+m.x,{cards:[],chips:['Línea del tiempo','Sorpréndeme'],ctx:Object.assign({},ctx,{ult:null})});
-   }
-  }
   const kindC=kindDe(ts);
   const resto=ts.filter(t=>!KIND[t]&&t!=='historia'&&!GEN.has(t));
   if(kindC==='Línea del tiempo'&&!resto.length)return linea(ctx);
