@@ -182,6 +182,17 @@
  "ajustes": {
   "archivoEndpoint": "",
   "imgbbKey": "626b20ab0e1c0edcafcd67505589b070",
+  "nix": {
+   "ia": {
+    "activa": true,
+    "siteKey": "6LfyvjQuAAAAACbNOsGoXYx58eMX8g1O04Jbum9B",
+    "modelo": "gemini-3.5-flash-lite",
+    "sdk": "12.18.0",
+    "maxPorSesion": 20,
+    "esperaMs": 9000,
+    "maxTokens": 500
+   }
+  },
   "recorridoSegundos": 8,
   "geoMapa": {
    "referencias": [
