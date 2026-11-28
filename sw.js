@@ -1,5 +1,5 @@
-const VERSION='museo-cetis69-v10';
-const NUCLEO=['index.html','salon-fama.html','libro-visitas.html','archivo-fotografico.html','Museo-3D.html','museo.js','museo.css','puntos.js','creditos.html','estilos.css','hero-fachada.jpg','fondo-nav.jpg','paginas.css','comun.js','nix.css','nix.js','nix-cerebro.js','nix-ia.js','nix-avatar-sm.png','firebase-museo.js','datos.json','manifest.webmanifest','icono-180.png','icono-192.png','icono-512.png'];
+const VERSION='museo-cetis69-v12';
+const NUCLEO=['index.html','salon-fama.html','libro-visitas.html','archivo-fotografico.html','Museo-3D.html','museo.js','museo.css','puntos.js','creditos.html','estilos.css','hero-fachada.jpg','fondo-nav.jpg','paginas.css','comun.js','nix.css','nix.js','nix-cerebro.js','nix-ia.js','nix-avatar-sm.png','firebase-museo.js','datos.json','manifest.webmanifest','icono-192.png','icono-512.png'];
 const EXTERNOS=['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js','https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap'];
 const ESPERA_RED=4000;
 const DIRECTO=/^(firestore|identitytoolkit|securetoken|firebaseinstallations)\.googleapis\.com$|^firebasevertexai\.googleapis\.com$|^firebaseappcheck\.googleapis\.com$|^recaptchaenterprise\.googleapis\.com$|^www\.google\.com$|^api\.imgbb\.com$/;
