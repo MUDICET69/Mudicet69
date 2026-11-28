@@ -157,7 +157,6 @@ function indice(D){
  (D.exalumnos||[]).forEach(e=>add('Exalumnos',e.n,e.r+' · '+e.d,inicio+'#exalumnos'));
  (D.ciencia||[]).forEach(c=>add('Ciencia',c.n,c.r+' · '+c.d,inicio+'#ciencia'));
  (D.premios||[]).forEach(p=>add('Salón de la fama',p.n,p.l+' · '+p.y+' · '+p.p,'salon-fama.html'));
- (D.zonas||[]).forEach(z=>add('Mapa 360°',z.n,(z.etiquetas||[]).join(' · ')+' '+z.d,'mapa-360.html?zona='+z.id));
  (D.archivo||[]).forEach(a=>add('Archivo fotográfico',a.c,'Década '+a.d+'0s','archivo-fotografico.html'));
  const C=D.creditos||{};
  (C.equipo||[]).forEach(p=>add('Créditos',p.nombre,p.rol+(p.detalle?' · '+p.detalle:''),'creditos.html'));
@@ -240,7 +239,6 @@ const PARADAS=[
  {clave:'exalumnos',etiqueta:'Exalumnos',icono:'fa-user-graduate',pag:'index.html',sel:'#exalumnos'},
  {clave:'ciencia',etiqueta:'Ciencia',icono:'fa-lightbulb',pag:'index.html',sel:'#ciencia'},
  {clave:'salon-fama',etiqueta:'Salón de la fama',icono:'fa-trophy',pag:'salon-fama.html'},
- {clave:'mapa-360',etiqueta:'Mapa 360°',icono:'fa-compass',pag:'mapa-360.html'},
  {clave:'archivo-foto',etiqueta:'Archivo fotográfico',icono:'fa-camera-retro',pag:'archivo-fotografico.html'},
  {clave:'museo-3d',etiqueta:'Recorrido 3D',icono:'fa-cube',pag:'museo-3d.html'},
  {clave:'libro',etiqueta:'Libro de visitas',icono:'fa-feather',pag:'libro-visitas.html'}
