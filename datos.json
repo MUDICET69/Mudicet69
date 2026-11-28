@@ -101,6 +101,16 @@
     "t": "Códigos QR por zona",
     "u": "qr-zonas.html",
     "x": "Genera e imprime un código QR para cada zona del plantel"
+   },
+   {
+    "t": "Términos y condiciones",
+    "u": "terminos.html",
+    "x": "Reglas de uso del sitio, moderación de contenido y licencias de las fotografías compartidas"
+   },
+   {
+    "t": "Aviso de privacidad",
+    "u": "aviso-privacidad.html",
+    "x": "Qué datos recopilamos en el libro de visitas y el archivo fotográfico, y cómo los usamos"
    }
   ],
   "pie": {
@@ -147,6 +157,14 @@
     {
      "t": "QR",
      "u": "qr-zonas.html"
+    },
+    {
+     "t": "Términos",
+     "u": "terminos.html"
+    },
+    {
+     "t": "Privacidad",
+     "u": "aviso-privacidad.html"
     }
    ],
    "redes": [
