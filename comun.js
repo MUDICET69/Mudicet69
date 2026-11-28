@@ -23,15 +23,27 @@ estiloExtra.textContent=`
 .psp{position:fixed;left:1rem;bottom:1rem;z-index:90;font-family:inherit}
 .psp-btn{display:flex;align-items:center;gap:.5rem;padding:.65rem 1rem;background:var(--guinda);color:#fff;border:none;font-size:.7rem;letter-spacing:.08em;font-weight:600;box-shadow:0 10px 30px -14px rgba(0,0,0,.5);cursor:pointer}
 .psp-btn:hover{background:var(--guinda-d)}
-.psp-pop{position:absolute;left:0;bottom:calc(100% + .6rem);width:min(280px,80vw);background:#fff;border:1px solid var(--linea);box-shadow:0 20px 50px -20px rgba(0,0,0,.4);padding:1rem 1.1rem;opacity:0;pointer-events:none;transform:translateY(8px);transition:.25s}
-.psp.open .psp-pop{opacity:1;pointer-events:auto;transform:translateY(0)}
-.psp-tit{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gris);margin-bottom:.7rem;font-weight:600}
-.psp ul{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;max-height:50vh;overflow-y:auto}
-.psp-item{display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:var(--gris);opacity:.55;transition:.3s}
-.psp-item i:first-child{width:16px;text-align:center;color:var(--guinda)}
-.psp-ok{margin-left:auto;opacity:0;color:var(--guinda)}
-.psp-item.on{opacity:1;color:inherit}
-.psp-item.on .psp-ok{opacity:1}
+.psp-pop{position:absolute;left:0;bottom:calc(100% + .6rem);width:min(560px,92vw);display:grid;grid-template-columns:1fr 1.3fr;background:#fff;border:1px solid var(--linea);box-shadow:0 20px 50px -20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transform:translateY(10px) scale(.98);transform-origin:bottom left;transition:.3s;border-radius:4px;overflow:hidden}
+.psp.open .psp-pop{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+.psp-tapa{background:var(--guinda-d);color:#fff;padding:1.5rem 1.1rem;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;border-right:1px solid rgba(255,255,255,.15)}
+.psp-tapa .mark{width:46px;height:46px;display:block;margin-bottom:.3rem}
+.psp-marca{font-size:.86rem;font-weight:700;letter-spacing:.07em}
+.psp-marca2{font-size:.55rem;letter-spacing:.1em;opacity:.8;text-transform:uppercase}
+.psp-nombre{font-size:1.1rem;font-weight:700;line-height:1.15;margin-top:.6rem}
+.psp-lema{font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-top:.5rem}
+.psp-pagina{background:var(--gris-c);padding:1.2rem 1.1rem;max-height:62vh;overflow-y:auto}
+.psp-tit{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--guinda);font-weight:700;margin:0}
+.psp-ayuda{font-size:.66rem;color:var(--gris);margin:.35rem 0 .9rem}
+.psp-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.psp-item{display:flex;flex-direction:column;align-items:center;gap:.4rem;font-size:.62rem;letter-spacing:.02em;text-align:center;color:var(--gris)}
+.psp-casilla{position:relative;width:100%;aspect-ratio:1/1;border:1.5px dashed var(--linea);background:#fff;display:grid;place-items:center;font-size:1.15rem;color:var(--linea);transition:.3s}
+.psp-ok{position:absolute;bottom:-.4rem;right:-.4rem;font-size:.55rem;background:var(--guinda);color:#fff;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;opacity:0;transform:scale(.4);transition:.3s}
+.psp-item.on .psp-casilla{border-style:solid;border-color:var(--guinda);color:var(--guinda)}
+.psp-item.on span{color:inherit;font-weight:600}
+.psp-item.on .psp-ok{opacity:1;transform:scale(1)}
+.psp-pie{margin-top:1rem;padding-top:.8rem;border-top:1px dashed var(--linea);display:flex;align-items:center;justify-content:space-between;gap:.8rem;font-size:.6rem;color:var(--gris)}
+.psp-sello{border:2px dashed var(--guinda);color:var(--guinda);border-radius:50%;width:56px;height:56px;display:grid;place-items:center;text-align:center;font-size:.48rem;font-weight:700;letter-spacing:.03em;line-height:1.2;transform:rotate(-8deg);flex:0 0 auto}
+@media (max-width:560px){.psp-tapa{display:none}.psp-pop{grid-template-columns:1fr}}
 .instalar{position:fixed;right:1rem;bottom:1rem;z-index:90;display:flex;align-items:center;gap:.5rem;padding:.65rem 1.1rem;background:var(--negro,#1a1a1a);color:#fff;border:none;font-size:.7rem;letter-spacing:.08em;font-weight:600;box-shadow:0 10px 30px -14px rgba(0,0,0,.5);cursor:pointer}
 .instalar:hover{opacity:.9}
 .instalar:disabled{opacity:.6;cursor:wait}
@@ -214,6 +226,7 @@ function armarBuscador(D){
  if(boton)boton.addEventListener('click',abrir);
 }
 
+/* ---------- pasaporte digital ---------- */
 const KP='cetis69_pasaporte';
 const PARADAS=[
  {clave:'historia',etiqueta:'Historia',icono:'fa-landmark',pag:'index.html',sel:'#historia'},
@@ -237,6 +250,8 @@ function pintarPasaporte(){
  if(!cajaPasaporte)return;
  cajaPasaporte.querySelector('.psp-cont').textContent=sellos.length+' / '+PARADAS.length;
  cajaPasaporte.querySelectorAll('.psp-item').forEach(li=>li.classList.toggle('on',sellos.includes(li.dataset.clave)));
+ const sello=cajaPasaporte.querySelector('.psp-sello');
+ if(sello)sello.hidden=sellos.length<PARADAS.length;
 }
 
 function sellar(clave){
@@ -252,9 +267,12 @@ function crearPasaporte(){
  if(archivoActual==='moderar.html'||$('.psp'))return null;
  const box=d.createElement('div');box.className='psp';
  box.innerHTML='<button type="button" class="psp-btn" aria-expanded="false" aria-label="Pasaporte del museo"><i class="fa-solid fa-stamp" aria-hidden="true"></i><span class="psp-cont"></span></button>'+
-  '<div class="psp-pop" role="group" aria-label="Sellos del pasaporte"><p class="psp-tit">Tu pasaporte del museo</p><ul>'+
-  PARADAS.map(p=>'<li class="psp-item" data-clave="'+p.clave+'"><i class="fa-solid '+p.icono+'" aria-hidden="true"></i><span>'+esc(p.etiqueta)+'</span><i class="fa-solid fa-check psp-ok" aria-hidden="true"></i></li>').join('')+
-  '</ul></div>';
+  '<div class="psp-pop" role="group" aria-label="Pasaporte del museo">'+
+   '<div class="psp-tapa"><span class="mark" role="img" aria-label="CETIS 69" aria-hidden="true"></span><p class="psp-marca">MUDICET69</p><p class="psp-marca2">Museo Digital del CETIS 69</p><p class="psp-nombre">Pasaporte<br>Digital</p><p class="psp-lema">Explora · Aprende · Descubre</p></div>'+
+   '<div class="psp-pagina"><p class="psp-tit">Registro de sesiones</p><p class="psp-ayuda">Marca cada sección que visites en el museo digital.</p><ul class="psp-grid">'+
+    PARADAS.map(p=>'<li class="psp-item" data-clave="'+p.clave+'"><div class="psp-casilla"><i class="fa-solid '+p.icono+'" aria-hidden="true"></i><i class="fa-solid fa-check psp-ok" aria-hidden="true"></i></div><span>'+esc(p.etiqueta)+'</span></li>').join('')+
+    '</ul><div class="psp-pie"><span>Tu exploración también deja huella</span><div class="psp-sello" hidden>MUDICET69<br>CETIS 69</div></div></div>'+
+  '</div>';
  d.body.appendChild(box);
  const btn=box.querySelector('.psp-btn');
  btn.addEventListener('click',()=>btn.setAttribute('aria-expanded',String(box.classList.toggle('open'))));
@@ -276,6 +294,7 @@ function iniciarPasaporte(){
  });
 }
 
+/* ---------- instalar app ---------- */
 let promptInstalar=null,botonInstalar=null;
 function crearBotonInstalar(){
  if(botonInstalar||archivoActual==='moderar.html'||d.documentElement.classList.contains('kiosco'))return null;
