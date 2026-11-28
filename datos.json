@@ -104,7 +104,7 @@
    "contacto": [
     {
      "i": "fa-solid fa-location-dot",
-     "t": "Ciudad Obregón, Sonora"
+     "t": "Av. 6 de Abril 1602, Benito Juárez, 85060 Cd. Obregón, Son."
     },
     {
      "i": "fa-solid fa-phone",
@@ -113,6 +113,10 @@
     {
      "i": "fa-solid fa-envelope",
      "t": "correo@cetis69.edu.mx"
+    },
+    {
+     "i": "fa-solid fa-envelope",
+     "t": "mudicet69@gmail.com"
     }
    ],
    "enlaces": [
@@ -164,6 +168,11 @@
      "i": "fa-brands fa-tiktok",
      "t": "TikTok",
      "u": "https://www.tiktok.com/@comite.ce69?is_from_webapp=1&sender_device=pc"
+    },
+    {
+     "i": "fa-brands fa-YouTube",
+     "t": "YouTube",
+     "u": "https://www.youtube.com/@MUDICET69"
     }
    ],
    "copyright": "© 2026 CETIS 69 · TODOS LOS DERECHOS RESERVADOS"
@@ -201,9 +210,9 @@
  },
  "hitos": [
   {
-   "y": "1986",
+   "y": "1980",
    "t": "Los primeros años",
-   "d": "Texto sobre la fundación y los primeros años del plantel.",
+   "d": "El Centro de Estudios Tecnológicos Industrial y de Servicios Nº 69 (CETis 69) abrió sus puertas en septiembre de 1980, ubicado en la calle Constitución y Calzada Francisco Villanueva Castelo, en la colonia Benito Juárez de Ciudad Obregón, Sonora. Su creación respondió a la necesidad urgente de ampliar la oferta de bachillerato tecnológico federal en el municipio de Cajeme, impulsada por la Dirección General de Educación Tecnológica Industrial (DGETI) para formar técnicos profesionales que se integraran al desarrollo agrícola, comercial e industrial del Valle del Yaqui.",
    "s": [
     [
      "fa-bolt",
@@ -240,7 +249,7 @@
   {
    "y": "1990",
    "t": "Crecimiento institucional",
-   "d": "Texto sobre la consolidación y ampliación de la matrícula.",
+   "d": "Tras superar los retos de su fundación en los años ochenta y con el CBTis 188 ya operando en sus propias instalaciones, los años noventa marcaron la etapa de madurez institucional y crecimiento para el CETis No. 69 en Ciudad Obregón. Durante esta década, el plantel dejó de ser una escuela nueva para consolidarse como una de las opciones de educación media superior más demandadas por las familias de la colonia Benito Juárez y el sur-oriente de Cajeme.",
    "s": [
     [
      "fa-bolt",
@@ -285,7 +294,7 @@
   {
    "y": "2000",
    "t": "Era digital",
-   "d": "Texto sobre la llegada de la tecnología a las aulas.",
+   "d": "Con el inicio del nuevo milenio, el CETis No. 69 dio el salto hacia la era digital en Ciudad Obregón, modernizando sus laboratorios con acceso a internet y nuevo equipo tecnológico. Durante esta década, el plantel adoptó el modelo educativo basado en competencias de la DGETI, fortaleciendo la vinculación con empresas locales para el servicio social y las prácticas profesionales. Además, se mejoraron las instalaciones de la colonia Benito Juárez —destacando la construcción de la techumbre en su plaza cívica y deportiva— y se consolidó el orgullo Pantera con una destacada participación estudiantil en torneos deportivos y culturales a nivel estatal.",
    "s": [
     [
      "fa-laptop-code",
@@ -330,7 +339,7 @@
   {
    "y": "2010",
    "t": "Nuevas generaciones",
-   "d": "Texto sobre los logros y la modernización del plantel.",
+   "d": "Durante la década de 2010, el CETis No. 69 vivió una etapa de fuerte proyección académica, tecnológica y comunitaria en Ciudad Obregón, impulsada por la obligatoriedad de la educación media superior y el auge de las redes sociales y las tecnologías móviles en las aulas. El plantel de la colonia Benito Juárez fortaleció el equipamiento de sus talleres y laboratorios, logrando que sus estudiantes destacaran en concursos estatales y nacionales de prototipos tecnológicos, emprendimiento y habilidades académicas de la DGETI. Asimismo, se consolidaron programas de tutorías, prevención escolar y vinculación comunitaria en el sector sur-oriente de Cajeme, sentando las bases de modernización que prepararían a la institución rumbo a su cuadragésimo aniversario.",
    "s": [
     [
      "fa-laptop-code",
@@ -379,7 +388,7 @@
   {
    "y": "2020",
    "t": "Resiliencia",
-   "d": "Texto sobre la adaptación y la educación a distancia.",
+   "d": "La década de los 2020 comenzó con el histórico reto de la pandemia, periodo en el que la comunidad del CETis No. 69 demostró una gran resiliencia al migrar a las aulas virtuales para asegurar la continuidad académica de sus estudiantes. Tras el regreso a clases presenciales y bajo el marco de la Nueva Escuela Mexicana, el plantel de la colonia Benito Juárez renovó por completo su oferta educativa para responder a las demandas del futuro, integrando especialidades de vanguardia como Inteligencia Artificial, Robótica y Automatización, E-Commerce y Gestión de Tecnologías Informáticas. Con más de 45 años de historia en Ciudad Obregón, la institución se mantiene hoy como un referente educativo en Cajeme, formando a nuevas generaciones de Panteras con visión tecnológica y compromiso social.",
    "s": [
     [
      "fa-laptop-code",
@@ -484,33 +493,105 @@
   }
  ],
  "hitoImagenes": {
-  "1986": "images/hito-1986.jpg",
-  "1990": "images/hito-1990.jpg",
-  "2000": "images/hito-2000.jpg",
-  "2010": "2010.JPG",
+  "1986": "1986.jpg",
+  "1990": "1990.jpg",
+  "2000": "2000.jpg",
+  "2010": "2010.jpg",
   "2020": "cetis69.jpg",
   "2026": "aniversario.jpg"
  },
  "eventos": [
   {
-   "d": "00",
-   "m": "MES",
-   "n": "Nombre del evento",
-   "t": "Descripción breve del evento."
+    "d": "01",
+    "m": "SEP",
+    "n": "Fundación oficial del CETis No. 69",
+    "t": "Inicia formalmente actividades en la colonia Benito Juárez de Ciudad Obregón bajo el subsistema federal de la DGETI."
   },
   {
-   "d": "00",
-   "m": "MES",
-   "n": "Nombre del evento",
-   "t": "Descripción breve del evento."
+    "d": "15",
+    "m": "SEP",
+    "n": "Sede inicial del CBTis No. 188",
+    "t": "El plantel alberga en sus instalaciones el nacimiento y las primeras operaciones del CBTis 188 antes de tener edificio propio."
   },
   {
-   "d": "00",
-   "m": "MES",
-   "n": "Nombre del evento",
-   "t": "Descripción breve del evento."
+    "d": "20",
+    "m": "OCT",
+    "n": "Consolidación de las primeras generaciones Panteras",
+    "t": "Egresan los primeros técnicos profesionales formados para impulsar el desarrollo industrial y comercial del Valle del Yaqui."
+  },
+  {
+    "d": "10",
+    "m": "MAY",
+    "n": "Modernización de talleres y laboratorios de cómputo",
+    "t": "Transición de máquinas de escribir a las primeras aulas de informática con equipos de escritorio y software de oficina en los años 90."
+  },
+  {
+    "d": "18",
+    "m": "NOV",
+    "n": "Expansión de turnos matutino y vespertino",
+    "t": "Ante el crecimiento demográfico de Cajeme, se amplía la cobertura para atender a cientos de jóvenes del sur-oriente de la ciudad."
+  },
+  {
+    "d": "05",
+    "m": "MAR",
+    "n": "Auge en encuentros deportivos y culturales DGETI",
+    "t": "Las selecciones deportivas, banda de guerra y escolta comienzan a destacar en competencias estatales y nacionales."
+  },
+  {
+    "d": "12",
+    "m": "FEB",
+    "n": "Llegada de la conectividad digital y banda ancha",
+    "t": "En la década de los 2000 se actualizan los laboratorios con acceso a internet y herramientas digitales para el aprendizaje."
+  },
+  {
+    "d": "25",
+    "m": "AGO",
+    "n": "Implementación del modelo basado en competencias",
+    "t": "Con la Reforma Integral (RIEMS), se fortalece la vinculación con empresas locales para prácticas profesionales y servicio social."
+  },
+  {
+    "d": "28",
+    "m": "AGO",
+    "n": "Inauguración de la techumbre en plaza cívica",
+    "t": "Se entrega formalmente el área techada de las Panteras en 2017, beneficiando a cerca de 1,300 estudiantes contra el clima extremo."
+  },
+  {
+    "d": "14",
+    "m": "JUN",
+    "n": "Destacada participación en concursos de prototipos",
+    "t": "Estudiantes del plantel obtienen reconocimientos estatales en innovación tecnológica y emprendimiento juvenil."
+  },
+  {
+    "d": "23",
+    "m": "MAR",
+    "n": "Transición a educación virtual por pandemia",
+    "t": "En 2020 la comunidad escolar migra a plataformas digitales para garantizar la continuidad académica ante la emergencia sanitaria."
+  },
+  {
+    "d": "01",
+    "m": "SEP",
+    "n": "Celebración del 45 Aniversario del plantel",
+    "t": "En 2025 se realiza la ceremonia conmemorativa oficial con reconocimientos a docentes y personal fundador por 45 años de historia."
+  },
+  {
+    "d": "17",
+    "m": "OCT",
+    "n": "Creación del proyecto ecológico Jardín Polinizador",
+    "t": "Estudiantes y personal colaboran con iniciativas ciudadanas en Plano Oriente para fomentar el cuidado ambiental."
+  },
+  {
+    "d": "06",
+    "m": "NOV",
+    "n": "Incorporación de 6 nuevas carreras de vanguardia",
+    "t": "En 2026 se actualiza la oferta educativa integrando especialidades como Inteligencia Artificial, Mecatrónica y Robótica."
+  },
+  {
+    "d": "20",
+    "m": "NOV",
+    "n": "Reconocimientos deportivos y culturales municipales",
+    "t": "Atletas y estudiantes son premiados a nivel municipal por sus logros deportivos y su participación en exposiciones culturales sonorenses."
   }
- ],
+],
  "proyectos": [
   {
    "i": "fa-gears",
