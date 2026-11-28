@@ -23,8 +23,6 @@ const GRUPOS={
  foto:['foto','fotografia','imagen','album','galeria','video','recuerdo','archivo'],
  historia:['historia','pasado','origen','fundacion','fundo','antecedente','cronologia'],
  evento:['evento','actividad','festival','ceremonia','celebracion'],
- mapa:['mapa','plano','croquis','360'],
- zona:['zona','area','lugar','espacio','instalacion'],
  ciencia:['ciencia','cientifico','investigacion'],
  proyecto:['proyecto','prototipo','invento'],
  dejar:['dejar','dejo','deja','dejan','dejamos','escribir','escribo','firmar','firmo'],
@@ -32,9 +30,9 @@ const GRUPOS={
 };
 const CANON={};
 Object.keys(GRUPOS).forEach(k=>GRUPOS[k].forEach(p=>{CANON[stem(norm(p))]=k}));
-const KIND={mapa:'Mapa 360°',exalumno:'Exalumnos',docente:'Docentes',premio:'Salón de la fama',evento:'Eventos',proyecto:'Proyectos de estudiantes',foto:'Archivo fotográfico',zona:'Mapa 360°',especialidad:'Oferta educativa',ciencia:'Ciencia',historia:'Línea del tiempo'};
-const KIND_PLURAL={'Exalumnos':'exalumnos','Docentes':'docentes','Salón de la fama':'reconocimientos','Eventos':'eventos','Proyectos de estudiantes':'proyectos de estudiantes','Archivo fotográfico':'recuerdos del archivo','Mapa 360°':'zonas del plantel','Oferta educativa':'especialidades','Ciencia':'proyectos de ciencia','Línea del tiempo':'etapas de la línea del tiempo'};
-const TAGS={'Salón de la fama':'premio salon fama deporte cultural','Exalumnos':'exalumno egresado','Docentes':'docente maestro','Eventos':'evento','Proyectos de estudiantes':'proyecto estudiante','Archivo fotográfico':'foto archivo recuerdo','Mapa 360°':'zona mapa lugar area','Oferta educativa':'especialidad carrera','Ciencia':'ciencia proyecto','Línea del tiempo':'historia etapa epoca','Créditos':'creditos equipo','Página':'pagina seccion','Ayuda':'ayuda como'};
+const KIND={exalumno:'Exalumnos',docente:'Docentes',premio:'Salón de la fama',evento:'Eventos',proyecto:'Proyectos de estudiantes',foto:'Archivo fotográfico',especialidad:'Oferta educativa',ciencia:'Ciencia',historia:'Línea del tiempo'};
+const KIND_PLURAL={'Exalumnos':'exalumnos','Docentes':'docentes','Salón de la fama':'reconocimientos','Eventos':'eventos','Proyectos de estudiantes':'proyectos de estudiantes','Archivo fotográfico':'recuerdos del archivo','Oferta educativa':'especialidades','Ciencia':'proyectos de ciencia','Línea del tiempo':'etapas de la línea del tiempo'};
+const TAGS={'Salón de la fama':'premio salon fama deporte cultural','Exalumnos':'exalumno egresado','Docentes':'docente maestro','Eventos':'evento','Proyectos de estudiantes':'proyecto estudiante','Archivo fotográfico':'foto archivo recuerdo','Oferta educativa':'especialidad carrera','Ciencia':'ciencia proyecto','Línea del tiempo':'historia etapa epoca','Créditos':'creditos equipo','Página':'pagina seccion','Ayuda':'ayuda como'};
 const GEN=new Set(['plantel','escuela','cetis','museo','mudicet69','mudicet','digital'].map(w=>stem(norm(w))));
 const toks=s=>[...new Set(norm(s).split(' ').filter(w=>w&&!STOP.has(w)).map(w=>{const t=stem(w);return CANON[t]||t}))];
 const PH=/describe aqu[ií]|nombre del |nombre de la |texto sobre|descripci[oó]n breve|autores y especialidad|^materia$|lorem ipsum|por definir/i;
@@ -81,17 +79,12 @@ function crear(D,opc){
  (D.exalumnos||[]).forEach(e=>add('Exalumnos',e.n,(e.r||'')+'. '+(e.d||''),ini+'#exalumnos'));
  (D.ciencia||[]).forEach(c=>add('Ciencia',c.n,(c.r||'')+'. '+(c.d||''),ini+'#ciencia'));
  (D.premios||[]).forEach(p=>add('Salón de la fama',p.n,[p.l,p.y,p.p].filter(Boolean).join(' · ')+'. '+(p.d||''),'salon-fama.html',{cat:p.c,tags:p.c==='d'?'deporte deportivo':'cultural cultura'}));
- (D.zonas||[]).forEach(z=>{
-  const etq=(z.etiquetas||[]).join(', ');
-  const dd=PH.test(z.d||'')?'':(z.d||'');
-  add('Mapa 360°',z.n,[etq&&'Incluye: '+etq,dd].filter(Boolean).join('. '),'mapa-360.html?zona='+z.id,{pend:!dd,etq:z.etiquetas||[]});
- });
  (D.archivo||[]).forEach(a=>add('Archivo fotográfico',a.c,'Década de los '+a.d+'0s','archivo-fotografico.html',{dec:+(a.d+'0')}));
  const C=D.creditos||{};
  (C.equipo||[]).forEach(p=>add('Créditos',p.nombre,p.rol+(p.detalle?' · '+p.detalle:''),'creditos.html',{rol:p.rol}));
  (C.fuentes||[]).forEach(f=>add('Créditos',f.tipo,f.fuente,'creditos.html'));
  if(C.agradecimientos)add('Créditos','Agradecimientos',C.agradecimientos,'creditos.html');
- const CONOCIDAS=new Set(['sitio','ajustes','hitos','hitoImagenes','eventos','proyectos','exalumnos','ciencia','premios','archivo','zonas','creditos','offline']);
+ const CONOCIDAS=new Set(['sitio','ajustes','hitos','hitoImagenes','eventos','proyectos','exalumnos','ciencia','premios','archivo','creditos','offline']);
  Object.keys(D).filter(k=>!CONOCIDAS.has(k)).forEach(k=>{
   const v=D[k],et=k.charAt(0).toUpperCase()+k.slice(1).replace(/([A-Z])/g,' $1').toLowerCase();
   const textos=o=>Object.values(o).filter(x=>typeof x==='string');
@@ -110,7 +103,6 @@ function crear(D,opc){
   ['Dejar un mensaje en el libro de visitas','Escribe tu nombre, elige si eres exalumno, alumno, docente o visitante y deja tu mensaje. El equipo del museo lo revisa antes de publicarlo; mientras tanto lo verás marcado «En revisión».','libro-visitas.html'],
   ['Compartir una foto o un video','En el archivo fotográfico llena el formulario con tu nombre, el año aproximado, una descripción y tu fotografía (JPG, PNG o WebP), y autoriza que se publique con tu nombre. Si tienes un video, súbelo a YouTube, Google Drive, Vimeo o Facebook y pega el enlace. El equipo del museo lo revisa antes de publicarlo.','archivo-fotografico.html#envia'],
   ['Recorrido virtual en 3D',pag('Museo-3D.html').x||'Camina por el museo en primera persona.','Museo-3D.html'],
-  ['Mapa interactivo 360°',pag('mapa-360.html').x||'Recorrido virtual por el plantel.','mapa-360.html'],
   ['Instalar el museo como app','En el menú de tu navegador elige Instalar app o Agregar a pantalla de inicio. Lo básico sigue funcionando sin internet.',ini],
   ['Modo kiosco','En pantallas públicas el museo vuelve solo al inicio cuando nadie lo toca durante un rato.',ini]
  ].forEach(a=>add('Ayuda',a[0],a[1],a[2]));
@@ -164,8 +156,7 @@ function crear(D,opc){
   'salon-fama.html':['¿Qué reconocimientos hay?','Reconocimientos deportivos','Recorrido guiado','Ponme a prueba'],
   'libro-visitas.html':['¿Cómo dejo un mensaje?','Recorrido guiado','Ponme a prueba','Contacto'],
   'archivo-fotografico.html':['¿Cómo envío mi foto?','Fotos de los 90s','Recorrido guiado','Ponme a prueba'],
-  'museo-3d.html':['¿Cómo funciona el recorrido?','Recorrido guiado','Ponme a prueba','Mapa 360°'],
-  'mapa-360.html':['¿Qué zonas tiene el plantel?','Recorrido por el plantel','Ponme a prueba','Talleres'],
+  'museo-3d.html':['¿Cómo funciona el recorrido?','Recorrido guiado','Ponme a prueba'],
   'creditos.html':['¿Quién hizo el museo?','Recorrido guiado','Ponme a prueba','Contacto']
  };
  const sugerencias=pagina=>(SUG_PAG[(pagina||'').toLowerCase()]||SUG_BASE).slice();
@@ -184,7 +175,7 @@ function crear(D,opc){
 
  function bienvenida(pagina){
   const p=(pagina||'').toLowerCase();
-  const ctx={'salon-fama.html':'Estás en el Salón de la fama.','libro-visitas.html':'Estás en el libro de visitas.','archivo-fotografico.html':'Estás en el archivo fotográfico.','museo-3d.html':'Estás en el recorrido 3D.','mapa-360.html':'Estás en el mapa 360°.','creditos.html':'Estás en los créditos.'}[p];
+  const ctx={'salon-fama.html':'Estás en el Salón de la fama.','libro-visitas.html':'Estás en el libro de visitas.','archivo-fotografico.html':'Estás en el archivo fotográfico.','museo-3d.html':'Estás en el recorrido 3D.','creditos.html':'Estás en los créditos.'}[p];
   return R('Soy **NIX**, el guardián del conocimiento de MUDICET69. '+(ctx?ctx+' ':'')+'Pregúntame por la historia del plantel, sus especialidades, personas, años o cualquier rincón del museo, o pídeme que te lleve a una sección.',{chips:sugerencias(p)});
  }
 
@@ -271,7 +262,7 @@ function crear(D,opc){
 
  function aleatorio(ctx){
   const buenos=reales(docs).filter(d=>d.x&&d.k!=='Página'&&d.k!=='Ayuda');
-  const base=buenos.length?buenos:docs.filter(d=>d.k==='Oferta educativa'||d.k==='Mapa 360°'||d.k==='Línea del tiempo');
+  const base=buenos.length?buenos:docs.filter(d=>d.k==='Oferta educativa'||d.k==='Línea del tiempo');
   if(!base.length)return R('Todavía no tengo datos curiosos; el museo se está llenando de contenido.',{ctx});
   const d=pick(base);
   return R(pick(['Mira esto: **'+d.t+'**.','Te cuento algo de **'+d.t+'**.','Un rincón del museo: **'+d.t+'**.'])+(d.x?'\n'+corta(d.x,260):''),{cards:[card(d,false)],chips:['Otro dato','Línea del tiempo'],ctx:Object.assign({},ctx,{ult:null})});
@@ -282,10 +273,8 @@ function crear(D,opc){
   {t:'Recorrido virtual 3D',u:'Museo-3D.html',kw:'recorrido 3d virtual caminar'},
   {t:'Salón de la fama',u:'salon-fama.html',kw:'salon fama premio trofeo reconocimiento medalla'},
   {t:'Libro de visitas',u:'libro-visitas.html',kw:'libro visita mensaje firmar'},
-  {t:'Mapa interactivo 360°',u:'mapa-360.html',kw:'mapa 360 plano plantel'},
   {t:'Archivo fotográfico',u:'archivo-fotografico.html',kw:'archivo fotografico foto video galeria album recuerdo'},
   {t:'Créditos del museo',u:'creditos.html',kw:'creditos equipo agradecimiento'},
-  {t:'Códigos QR por zona',u:'qr-zonas.html',kw:'qr codigo zona'},
   {t:'Historia',u:ini+'#historia',kw:'historia'},
   {t:'Línea del tiempo',u:ini+'#linea',kw:'linea tiempo cronologia'},
   {t:'Oferta educativa',u:ini+'#oferta',kw:'oferta educativa especialidad carrera'},
@@ -299,7 +288,6 @@ function crear(D,opc){
   DESTINOS.forEach(x=>{let s=0;ts.forEach(t=>{if(x.k.has(t))s+=norm(x.t).split(' ').some(w=>stem(w)===t)?2:1});if(s>ms){ms=s;mejor=x}});
   return ms>=1?mejor:null;
  };
- (D.zonas||[]).forEach(z=>DESTINOS.push({t:z.n+' (mapa 360°)',u:'mapa-360.html?zona='+z.id,k:new Set(toks(z.n+' '+(z.etiquetas||[]).join(' ')))}));
 
  /* ---------- recorridos guiados ---------- */
  const PEND_ETAPA='El texto de esta etapa todavía se está completando.';
@@ -315,17 +303,8 @@ function crear(D,opc){
     pasos.push({t:h.y+' · '+h.t,x:x.join('\n'),cards:[cardUrl('Línea del tiempo',h.y+' · '+h.t,ini+'#linea')]});
    });
    pasos.push(cierre);
-  }else if(id==='plantel'){
-   const zs=D.zonas||[];
-   if(!zs.length)return null;
-   zs.forEach(z=>{
-    const etq=(z.etiquetas||[]).filter(Boolean);
-    const dd=PH.test(z.d||'')?'':(z.d||'');
-    pasos.push({t:z.n,x:[etq.length?'Aquí encuentras: '+listaCon(etq)+'.':'',dd].filter(Boolean).join('\n')||'Esta zona del plantel ya está marcada en el mapa.',cards:[cardUrl('Mapa 360°',z.n,'mapa-360.html?zona='+z.id)]});
-   });
-   pasos.push(cierre);
   }else if(id==='museo'){
-   const pg=(S.paginas||[]).filter(p=>!/qr-zonas/.test(p.u));
+   const pg=S.paginas||[];
    if(!pg.length)return null;
    pg.forEach(p=>pasos.push({t:p.t,x:p.u===ini&&PIE.descripcion?PIE.descripcion:(p.x||''),cards:[cardUrl('Ir a',p.t,p.u)]}));
   }
@@ -356,8 +335,6 @@ function crear(D,opc){
    en.forEach(n=>add('esp',mk('¿Cuál de estas especialidades aparece en la etapa '+h.y+'?',n,todasEsp.filter(x=>!en.includes(x)),'En la línea del tiempo, '+n+' aparece en la etapa '+h.y+'.')));
   });
   esp.forEach((ys,n)=>{if(ys.length===1)add('etapa',mk('¿En qué etapa de la línea del tiempo aparece «'+n+'»?',ys[0],hitos.map(h=>h.y),n+' aparece solo en la etapa '+ys[0]+'.'))});
-  const zs=D.zonas||[];
-  zs.forEach(z=>(z.etiquetas||[]).forEach(e=>add('zona',mk('¿Qué zona del plantel incluye «'+e+'»?',z.n,zs.map(x=>x.n),'«'+e+'» está en la zona '+z.n+' del mapa 360°.'))));
   const conteo={};(D.archivo||[]).forEach(a=>{conteo[a.c]=(conteo[a.c]||0)+1});
   (D.archivo||[]).forEach(a=>{if(conteo[a.c]===1){const dec=(+(a.d+'0'))+'s';add('arch',mk('¿De qué década es el recuerdo «'+a.c+'» del archivo fotográfico?',dec,(D.archivo||[]).map(x=>(+(x.d+'0'))+'s'),'«'+a.c+'» está en el archivo de los '+dec+'.'))}});
   const menu=(S.menu||[]).map(m=>m.t);
@@ -424,9 +401,9 @@ function crear(D,opc){
    return preguntaQuiz({p,i:0,s:0},ctx,'Vamos con '+p.length+' preguntas sobre el museo. Toca la respuesta que creas correcta.');
   }
   if((/\b(guiad\w*|guiame|tour|visita guiada|recorre conmigo|paseo)\b|\brecorrido por\b/.test(q))&&!/\b3d\b/.test(q)){
-   const id=/histor|linea|etapa|epoca/.test(q)?'historia':/plantel|zona|escuela|instalacion|mapa|cancha|taller/.test(q)?'plantel':/museo|todo|general|seccion/.test(q)?'museo':null;
+   const id=/histor|linea|etapa|epoca/.test(q)?'historia':/museo|todo|general|seccion/.test(q)?'museo':null;
    if(id){const r=pasoTour(id,0,ctx);if(r)return r}
-   return R('Con gusto te guío paso a paso. ¿Qué recorrido prefieres?',{chips:['Recorrido por la historia','Recorrido por el plantel','Recorrido por el museo'],sinIA:true,ctx});
+   return R('Con gusto te guío paso a paso. ¿Qué recorrido prefieres?',{chips:['Recorrido por la historia','Recorrido por el museo'],sinIA:true,ctx});
   }
 
   if(/^(mas|ver mas|otro|otra|otros|otras|siguiente|sigue|continua|y que mas|dame mas)$/.test(q)){
